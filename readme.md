@@ -49,6 +49,7 @@ $servername = "IP or localhost";
 $username = "xxxxxxx";
 $password = "xxxxxx";
 $dbname = "xxxxxxx";
+```
 
 ## Contributing
 Feel free to open issues.
