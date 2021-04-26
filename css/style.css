@@ -1,0 +1,298 @@
+/* Make content area fill the entire browser window */
+body,html {
+  font-family:'cera_promodernmedium',Helvetica,Arial,sans-serif;
+  margin: 0;
+  padding: 0;
+  color:#ffffff;
+  background-color:black;
+}
+
+/* Center the content in the browser window */
+.container {
+  margin: auto;
+  text-align: center;
+  min-height:100vh;
+  height:100vh;
+  margin-left:30px;
+  margin-right:30px;
+  position:relative;
+  font-size:30px;
+  line-height:1.1;
+}
+.messagesOuter {
+  position:absolute;
+  width:100%;
+  bottom:0;
+}
+.message {
+  display:block;
+  
+  margin-left:10px;
+  margin-right:10px;
+  background-color:rgb(255,255,255,0.1);
+  opacity:0.8;
+  padding:10px;
+  padding-top:5px;
+  padding-bottom:5px;
+  margin-bottom:10px;
+  color:white;
+  font-size:12px;
+  line-height:14px;
+  text-transform:uppercase;
+  display:none;
+}
+.center {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.control {
+  position:absolute;
+}
+#showPhoto {
+  display:none;
+  width:400px;
+  height:auto;
+  text-align:center;
+  margin:0 auto;
+  opacity:0.5;
+  z-index:0;
+}
+.control h3 {
+  margin:0;
+  padding:0;
+  margin-bottom:10px;
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: normal;
+}
+.stages {
+
+    right: 30px;
+    top: 30px;
+    width:150px;
+}
+.distance {
+  left:30px;
+  top:30px;
+}
+.stages ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+
+}
+.stages ul li {
+  position:relative;
+  clear:both;
+  height:35px;
+}
+.stages ul li span {
+
+    display: block;
+    float: left;
+    font-size: 20px;
+    line-height: 30px;
+    width: 30px;
+    height: 30px;
+    background-color: rgba(255,255,255,0.5);
+    border-radius: 50%;
+}
+.stages ul li .progressOuter {
+  position: absolute;
+    width: 94px;
+    height: 15px;
+    margin-top: 7.5px;
+    /* z-index: -100; */
+    margin-left: 28px;
+}
+.stages ul li .progressInner {
+    position:absolute;
+    height:100%;
+    width:0%;
+    background-color: red;
+}
+.stages ul li span.goal {
+  float:right;
+}
+.stages ul li.past {
+  opacity:0.25;
+}
+.stages ul li.future {
+  opacity:0.5;
+}
+a {
+  color:white;
+}
+a:hover {
+
+}
+#start,#restart,#resume,button {
+  text-decoration:none;
+  padding:15px;
+  border:1px solid white;
+  background-color:transparent;
+  color:white;
+  font-size:15px;
+  line-height:15px;
+}
+#start,#restart,#resume {
+  display:none;
+}
+#pathCanvas {
+  display:none;
+  position:relative;
+  z-index:1;
+}
+canvas {
+  position:relative;
+}
+#pathHolder {
+  width:400px;
+  height:400px;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    margin: 0 auto;
+}
+#pathHolder img {
+  position:absolute;
+  width:600px;
+  height:auto;
+  left:-100px;
+}
+.fullscreen {
+  width:100%;
+  height:100%;
+  position:absolute;
+  text-align:center;
+  overflow:hidden;
+}
+
+
+.treeCard {
+
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: white;
+    color:#333333;
+}
+.treeCard button.doPrompt {
+  background-color:#ff4967;
+  display:block;
+  margin:0 auto;
+  margin-top:10px;
+}
+#timberLogo {
+  display:block;
+  margin:0 auto;
+  margin-top:15px;
+  width:100px;
+}
+.treeCard h3,.treeCard h4,.treeCard h5 {
+  margin:0;
+  padding:0;
+  font-size:20px;
+  line-height:22px;
+}
+.treeCard h5 {
+  padding-top:3px;
+  padding-bottom:10px;
+  font-size:17px;
+}
+.treeCard h4 img {
+  display:block;
+}
+.treeCard p {
+  font-size:14px;
+  margin:0;
+  padding:0;
+  padding-bottom:5px;
+}
+#timberMatch {
+      display: block;
+    margin: 0 auto;
+    width: 280px;
+    padding-top: 15px;
+}
+#tree {
+  width:210px;
+  border-radius:50%;
+  border:7px solid #ff4967;
+  margin:0 auto;
+  margin-top:15px;
+  margin-bottom:15px;
+}
+
+.prompt {
+  z-index:100;
+  display:none;
+}
+.promptBg {
+
+    position: absolute;
+    background-color: #3333bb;
+    width: 100vh;
+    height: 100vh;
+    margin: 0 auto;
+    left:-30%;
+    border-radius: 50%;
+}
+.takePhoto .promptBg {
+  background-color:#bb3333;
+}
+.recordAudio .promptBg {
+  background-color:#009999;
+}
+.matchTree .promptBg {
+  background-color:#00dd22;
+}
+.zigzag .promptBg {
+  background-color:#770099;
+}
+.confirm .promptBg {
+  background-color:orange;
+}
+.complete .promptBg {
+    background-color: rgba(50,200,50,0.2);
+}
+#rotate {
+  display:none;
+}
+@media screen and (max-width:1000px) and (orientation:landscape) {
+  #rotate {
+
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: red;
+    z-index: 10000;
+
+  }
+  #rotate .content {
+
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align:center;
+
+  }
+  #rotate .content h2 {
+    margin:0;
+    padding:0;
+    font-size:25px;
+    line-height:1.2;
+    margin-bottom:5px;
+  }
+  #rotate .content img {
+    display:block;
+    margin:0 auto;
+    width:100px;
+    margin-bottom:20px;
+    opacity:0.5;
+  }
+}

@@ -1,0 +1,205 @@
+<html>
+<head>
+
+  <meta name="theme-color" content="#000000"/>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />  
+  <meta name="msapplication-TileColor" content="000000">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Tilt test</title>
+	<style>
+		* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+	</style>
+</head>
+<body>
+	<a id="start" href="#">start</a>
+	
+	<script src="js/matter.min.js" type="text/javascript"></script>
+	<script>
+
+		// Matter.js - http://brm.io/matter-js/
+
+		var Example = Example || {};
+		
+		Example.avalanche = function() {
+		    var Engine = Matter.Engine,
+		        Render = Matter.Render,
+		        Runner = Matter.Runner,
+		        Composite = Matter.Composite,
+		        Composites = Matter.Composites,
+		        Common = Matter.Common,
+		        MouseConstraint = Matter.MouseConstraint,
+		        Mouse = Matter.Mouse,
+		        World = Matter.World,
+		        Bodies = Matter.Bodies,
+		        Events = Matter.Events;
+
+		    // create engine
+		    var engine = Engine.create();
+		    world = engine.world;
+		  
+
+		    // create renderer
+		    var render = Render.create({
+		        element: document.body,
+		        engine: engine,
+		        options: {
+		            width: 200,
+		            height: 600,
+		            wireframes: false
+		        }
+		    });
+
+		    Render.run(render);
+
+		    // create runner
+		    var runner = Runner.create();
+		    Runner.run(runner, engine);
+		    
+		    world.gravity.y = 0;
+		    // add bodies
+		    /* var stack = Composites.stack(1, 1, 1, 1, 0, 0, function(x, y) {
+		        return Bodies.circle(x, y, Common.random(10, 20), { friction: 0.00001, restitution: 0.5, density: 0.001 });
+		    }); */
+		    var ball = Bodies.circle(150, 600, 7, { friction: 0.00001, restitution: 0.5, density: 0.001, label:'match' });
+
+		    World.add(world, ball);
+		    
+		    World.add(world, [
+		      // left rectangles
+		      Bodies.rectangle(0, 600, 200, 200, { isStatic: true, angle: Math.PI/4, 
+		      	render: {
+		      		fillStyle:'#339933',
+		      		lineWidth:0
+		      	}	 
+		  	}),
+		      
+		      Bodies.rectangle(0, 400, 200, 200, { isStatic: true, angle: Math.PI/4 , 
+		      	render: {
+		      		fillStyle:'#339933',
+		      		lineWidth:0
+		      	}	 }),
+		      Bodies.rectangle(0, 200, 200, 200, { isStatic: true, angle: Math.PI/4 , 
+		      	render: {
+		      		fillStyle:'#339933',
+		      		lineWidth:0
+		      	}	 }),
+		      Bodies.rectangle(0, 00, 200, 200, { isStatic: true, angle: Math.PI/4 , 
+		      	render: {
+		      		fillStyle:'#339933',
+		      		lineWidth:0
+		      	}	 }),
+		      
+		      // right rectangles
+		      Bodies.rectangle(210, 500, 200, 200, { isStatic: true, angle: Math.PI/4 , 
+		      	render: {
+		      		fillStyle:'#339933',
+		      		lineWidth:0
+		      	}	 }),
+		      // right rectangles
+		      Bodies.rectangle(210, 300, 200, 200, { isStatic: true, angle: Math.PI/4 , 
+		      	render: {
+		      		fillStyle:'#339933',
+		      		lineWidth:0
+		      	}	 }),
+		      
+		      // right rectangles
+		      Bodies.rectangle(210, 100, 200, 200, { isStatic: true, angle: Math.PI/4 , 
+		      	render: {
+		      		fillStyle:'#339933',
+		      		lineWidth:0
+		      	}	 }),
+		      
+		      // bottom border
+		      Bodies.rectangle(100, 600, 200, 2, { isStatic: true, angle: 0 , 
+		      	render: {
+		      		fillStyle:'#339933',
+		      		lineWidth:0
+		      	}	 })
+
+		    ]);
+
+		    // following a collisionStart event, check if the collision occurs between the player and the goal post
+			function handleCollision(e) {
+				if(ball.position.y<=10) {
+					
+		            
+		            World.clear(world);
+		            Engine.clear(engine);
+		            Render.stop(render);
+		            Runner.stop(runner);
+		            render.canvas.remove();
+		            render.canvas = null;
+		            render.context = null;
+		            render.textures = {};
+		            console.log('game ended');
+				}
+			}
+			Events.on(engine, 'afterUpdate', handleCollision);
+
+
+
+		    // fit the render viewport to the scene
+		    // Render.lookAt(render, Composite.allBodies(world));
+
+		    // wrapping using matter-wrap plugin
+		    /* for (var i = 0; i < stack.bodies.length; i += 1) {
+		        stack.bodies[i].plugin.wrap = {
+		            min: { x: render.bounds.min.x, y: render.bounds.min.y },
+		            max: { x: render.bounds.max.x, y: render.bounds.max.y }
+		        };
+		    } */
+
+		    // context for MatterTools.Demo
+		    return {
+		        engine: engine,
+		        runner: runner,
+		        render: render,
+		        canvas: render.canvas,
+		        stop: function() {
+		            Matter.Render.stop(render);
+		            Matter.Runner.stop(runner);
+		        }
+		    };
+		};
+
+		function deviceTilting(event) {
+			world.gravity.y = (event.accelerationIncludingGravity.z+5)/9.81;
+			world.gravity.x = (event.accelerationIncludingGravity.x+5)/9.81;
+
+		}
+		document.getElementById('start').addEventListener('click',function(){
+            if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+            	console.log('requesting device motion permission')
+                DeviceMotionEvent.requestPermission().then( response => {
+		            // (optional) Do something after API prompt dismissed.
+		            console.log(response);
+		            if ( response == "granted" ) {
+		            	console.log('device motion permission granted');
+		                window.addEventListener( "devicemotion", (event) => {
+	                		deviceTilting(event);
+		                })
+		            } else {
+		            	_ = new Message('Orientation and motion sensor permissions are required. Please quit the browser, re-open this page and grant permissions to use this app.');
+		            	// stop the app here
+		            }
+		        })
+		        .catch( console.error ); // request permission on iOS devices
+            } else {
+            	window.addEventListener("devicemotion", function(event) {
+	                deviceTilting(event);
+	            });
+
+            }
+			Example.avalanche();
+		});
+
+		
+	</script>
+</body>
