@@ -1,4 +1,4 @@
-# The New Real/Edinbugrh Science Festival 2021 Web App
+# The New Real/Edinburgh Science Festival 2021 Web App
 
 Codebase for ETNR/ESF 2021 interactive web app.
 
