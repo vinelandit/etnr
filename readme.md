@@ -14,11 +14,14 @@ The experience consists of multiple stages of undirected walking, followed by on
 
 The experience structure mentioned above is reflected in the client-side JavaScript code:
 
+```
 App class
 |
 |--Currently active stage (Stage class)
    |
    |-- Currently active prompt (Prompt_XXXX class extending the base Prompt class)
+
+```
 
 The bulk of the interactivity is handled by the Prompt classes, but there is a chain of callbacks so that the Stage instance is notified when the next prompt should be displayed, and the App instance is notified when the next stage should be displayed.
 
