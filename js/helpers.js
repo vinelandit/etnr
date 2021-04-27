@@ -5,7 +5,7 @@ function broadcast(identifier,value) {
 	// global function to update (via jQuery) any aspect of the UI that is flagged by the identifier:
 	// <element data-bind-value="identifier" data-bind-map="" data-bind-map-suffix="" data-bind-only-map="false">xxxx</element>
 	// Elements with a data-bind-value matching identifier are targeted.
-	// If data-bind-only is absent or set to false, contents of the elements will be changed to value.
+	// If data-bind-only-map is absent or set to false, contents of the elements will be changed to value.
 	// If data-bind-map is present, the css parameter it contains (e.g. width) will have value applied to it.
 	// If data-bind-map-suffix is present, it will be appended to the css parameter (e.g. '%')
 	// data-bind-map and data-bind-map-suffix are optional. 
