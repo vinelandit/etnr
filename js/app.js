@@ -674,34 +674,4 @@ class App {
     	);
     }
 
-
-
-    logPerformance() {
-        // send the log to the server
-        var n = new Date();
-        var isoDT = n.toISOString();
-        if (typeof this.gps.lat !== 'undefined' && typeof this.gps.lon !== 'undefined') {
-            var params = {
-                'lat': this.gps.lat,
-                'lon': this.gps.lon,
-                'port': this.port.name,
-                'id': this.port.id,
-                'time': isoDT
-            };
-            var paramsURL = '';
-
-            for (var i in params) {
-                paramsURL += i + '=' + params[i] + '&';
-            };
-
-            console.log(paramsURL);
-
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', './log.php?' + paramsURL);
-            xhr.send(null);
-        }
-
-
-    }
-
 }
