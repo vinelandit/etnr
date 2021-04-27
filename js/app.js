@@ -133,7 +133,6 @@ class App {
 	        	this.state.stage.state.currentPrompt = showPrompt;
 	        	console.log('attempting to show prompt '+showPrompt);
 	        	this.state.stage.showPrompt();
-	        	console.log('STOP FUCKING STEPPING');
 	        	this.state.stepping = false;
 	        }
 	        // request media from server

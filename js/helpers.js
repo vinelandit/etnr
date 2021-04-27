@@ -66,6 +66,7 @@ function api(command,data,callback) {
 	});
 	
 }
+
 function isSafari() {
 	var is_chrome = navigator.userAgent.indexOf('Chrome') > -1;
 	var is_explorer = navigator.userAgent.indexOf('MSIE') > -1;
