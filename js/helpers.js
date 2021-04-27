@@ -8,7 +8,7 @@ function broadcast(identifier,value) {
 	// If data-bind-only-map is absent or set to false, contents of the elements will be changed to value.
 	// If data-bind-map is present, the css parameter it contains (e.g. width) will have value applied to it.
 	// If data-bind-map-suffix is present, it will be appended to the css parameter (e.g. '%')
-	// data-bind-map and data-bind-map-suffix are optional. 
+	// data-bind-only-map and data-bind-map-suffix are optional. 
 	// 
 
 	$('[data-bind-value="'+identifier+'"]').each(function(){
