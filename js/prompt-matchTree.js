@@ -11,9 +11,9 @@ class Prompt_matchTree extends Prompt {
 
 	cardhtml() {
 		return `<div class="treeCard center">
-			<img src="images/timber.jpg" alt="Timber" id="timberLogo" />
-			<h4><img src="images/match.jpg" alt="Match" id="timberMatch" />
-			<img src="images/tree.jpg" alt="Tree" id="tree" />
+			<!-- <img src="images/timber.jpg" alt="Timber" id="timberLogo" /> -->
+			<!-- <h4><img src="images/match.jpg" alt="Match" id="timberMatch" />
+			<img src="images/tree.jpg" alt="Tree" id="tree" /></h4> -->
 			<h3>{CommonName} ({LatinName})</h3>
 			<h5>{Site} ({distance} km)</h5>
 			<p>{AgeGroup}</p>

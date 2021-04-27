@@ -39,7 +39,7 @@ function broadcast(identifier,value) {
 
 function api(command,data,callback) {
 
-	const endpoint = 'https://ray.scot/etnr/api/';
+	const endpoint = './api/';
 	const key = 'testkeyp';
 	
 	var id = localStorage.getItem('etnr_userid');
