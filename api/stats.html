@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AWEN Draft Analytics</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,600;1,300;1,600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../leaflet/leaflet.css" />
+  <link rel="stylesheet" href="../css/style.css?reload={NOW}">
+  <meta name="theme-color" content="#000000"/>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />  
+  <meta name="msapplication-TileColor" content="000000">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style>
+    table {
+      margin:30px;
+      text-align:left;
+    }
+    table tr.completed {
+      color:green;
+      font-weight:bold;
+    }
+    table th,table td {
+      padding:5px;
+    }
+    h3 {
+      padding:30px;
+      background-color:#666;
+    }
+  </style>
+</head>
+
+<body class="">
+  <h3>Averages</h3>
+    <table id="averages">
+      <tr>
+        <th>Distance</th>
+        <th>Time</th>
+        <th>Prompts</th>
+        <th>Av. GPS acc.</th>
+      </tr>
+    </table>
+  <h3>Individual</h3>
+  <table id="main">
+    <tr><th>
+          Date
+        </th>
+        <th>
+          Distance
+        </th>
+        <th>
+          Time
+        </th>
+        <th>
+          Prompts
+        </th>
+        <th>
+          Av. GPS acc.
+        </th>
+
+        <th>
+          Media
+        </th>
+    </tr>
+    
+
+  <script src="../js/libs/jquery-3.5.1.min.js"></script>
+  <script src="../leaflet/leaflet.js"></script>
+
+  <script src="../three.js/build/three.min.js"></script>
+  <script src="../three.js/examples/js/controls/OrbitControls.js"></script>
+
+  <script src="../js/helpers.js?reload={NOW}"></script>
+
+  <script src="../js/prompt-base.js?reload={NOW}"></script>
+  <script src="../js/prompt-intro.js?reload={NOW}"></script>
+  <script src="../js/prompt-matchTree.js?reload={NOW}"></script>
+  <script src="../js/prompt-breathe.js?reload={NOW}"></script>
+  <script src="../js/prompt-complete2.js?reload={NOW}"></script>
+  <script src="../js/prompt-noise.js?reload={NOW}"></script>
+  <script src="../js/prompt-hum.js?reload={NOW}"></script>
+  <script src="../js/prompt-leaf.js?reload={NOW}"></script>
+  <script src="../js/prompt-ground.js?reload={NOW}"></script>
+  <script src="../js/prompt-weeds.js?reload={NOW}"></script>
+  <script src="../js/prompt-lichen.js?reload={NOW}"></script>
+  <script src="../js/prompt-wind.js?reload={NOW}"></script>
+  <script src="../js/prompt-blue.js?reload={NOW}"></script>
+  <script src="../js/prompt-quietness.js?reload={NOW}"></script>
+  <script src="../js/prompt-ocean.js?reload={NOW}"></script>
+  <script src="../js/prompt-clouds.js?reload={NOW}"></script>
+  <script src="../js/prompt-lightning.js?reload={NOW}"></script>
+  <script src="../js/prompt-vegetation.js?reload={NOW}"></script>
+
+  <script>
+      var tpl = `
+      <tr class="{complete}">
+        <td>{date}</td>
+        <td>{distance}</td>
+        <td>{time}</td>
+        <td>{prompts}</td>
+        <td>{gpsacc}</td>
+        <td>{media}</td>
+      </tr>`;
+
+      var avTpl = `
+      <tr>
+        <td>{distance}</td>
+        <td>{time}</td>
+        <td>{prompts}</td>
+        <td>{gpsacc}</td>
+      </tr>`;
+
+      var data = api('data',{
+        'from':'2021-05-01',
+        'to'  :'2021-05-30'
+      },function(response){
+        var html = '';
+
+        var averages = {
+          'gpsacc':0,
+          'time':0,
+          'distance':0,
+          'prompts':0
+        };
+
+        console.log(response);
+
+        var rowCount = 0;
+
+        var accCount = 0;
+        var timeCount = 0;
+        var distCount = 0;
+
+        for(var i in response.data) {
+          
+          var src = response.data[i].state;
+          if(src.testGPS) {
+            // exclude test runs
+          } else {
+            var dst = {};
+            var time = 0;
+            if(src.gpx[0].time) {
+              time = src.gpx[0].time;
+            } else {
+              time = src.gpx[0].timestamp;
+            }
+            dst.date = new Date(time).toLocaleString();
+
+
+            var dist = parseFloat(src.overallProgress);
+            if(isNaN(dist)) {
+              dst.distance = 'N/A';
+            } else {
+              dst.distance = dist.toFixed(2) + ' metres';
+              averages.distance += src.overallProgress;
+              distCount++;
+            }
+
+            var time = parseFloat(src.overallTime);
+            if(isNaN(time)) {
+              dst.time = 'N/A';
+            } else {
+              dst.time = (time/60).toFixed(2)+' mins';
+              averages.time += src.overallTime;
+              timeCount++;
+            }
+
+            averages.prompts += src.stageID;
+
+            console.log(averages);
+
+            dst.prompts  = src.stageID + '/' + src.stages.length;
+
+            if(src.stageID >= src.stages.length) {
+              dst.complete = 'completed';
+            } else {
+              dst.complete = '';
+            }
+            
+            var acc = 0;
+            for(var j=0;j<src.gpx.length;j++) {
+              if(src.gpx[j].accuracy>0) {
+                acc += src.gpx[j].accuracy;
+              }
+            }
+            acc /= j;
+            averages.gpsacc += acc;
+            accCount++;
+            if(acc>0) {
+              dst.gpsacc = acc.toFixed(2)+'m';
+            } else {
+              dst.gpsacc = 'N/A';
+            }
+          
+            rowCount++;
+
+
+            // check media
+            media = '';
+            for(var m=0;m<response.data[i].media.length;m++) {
+              var med = response.data[i].media[m];
+              media += '<a href="'+med.url+'" target="_blank">'+med.mediaid+' ('+med.mimetype+')</a>';
+            }
+            dst.media = media;
+
+            html += merge(tpl,dst);
+          }
+          
+        }
+        $('table#main').append(html);
+
+        averages.gpsacc /= accCount;
+        averages.time /= timeCount;
+        averages.distance /= distCount;
+        averages.prompts /= rowCount;
+
+
+
+        console.log('BORK '+i);
+
+        averages.gpsacc = averages.gpsacc.toFixed(2)+'m';
+        averages.time = (averages.time/60).toFixed(2)+' mins';
+        averages.distance = averages.distance.toFixed(2)+' metres';
+        averages.prompts = averages.prompts.toFixed(2);
+
+        $('table#averages').append(merge(avTpl,averages));
+
+      },'../api/',-1);
+
+  </script>
+
+</body>
+</html>

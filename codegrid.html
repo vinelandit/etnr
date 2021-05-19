@@ -1,0 +1,19 @@
+<html>
+<head>
+	<title>Codegrid test</title>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+</head>
+<body id="body">
+<script src="js/libs/codegrid-js-master/src/codegrid.js"></script>
+	
+<script>
+
+grid = codegrid.CodeGrid('./js/libs/codegrid-js-master/tiles/');
+grid.getCode (55, -3, function(error, code) {
+	console.log(error,code);
+} );
+
+	</script>
+</body>
+</html>

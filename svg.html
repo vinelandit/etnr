@@ -1,0 +1,79 @@
+<html>
+<head>
+	<title>SVG test</title>
+	<style>
+	body {
+		background:black;
+		color:white;
+	}
+	polygon {
+		transform:rotate(0deg);
+		transform-origin:50% 50%;
+		transition:all 0.5s;
+	}
+	</style>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+</head>
+<body id="body">
+<h3>Stage <span id="stage"></span> (<span id="dir"></span>)
+<svg height="300" width="300">
+  <polyline class="bg" points="150,300 200,225 100,150 200,75 150,0" style="fill:none;stroke:rgba(255,255,255,0.2);stroke-width:3" />
+  <polyline class="fg" points="150,300 200,225 100,150 200,75 150,0" style="fill:none;stroke:white;stroke-width:3" />
+
+  <polygon class="triangle" points="150,120 185,180 115,180" style="fill:rgba(100,255,255,0.5);stroke:none;stroke-width:1" />
+  Sorry, your browser does not support inline SVG.
+</svg>
+
+<script>
+
+	var stages = [
+		[0,'r'],
+		[.21,'l'],
+		[.5,'r'],
+		[.79,'l'],
+		[1.0,'f']
+	];
+
+	var svg  = document.querySelector('svg');
+	var line = document.querySelector('polyline.fg');
+	var len  = line.getTotalLength();
+	var stageEl = document.getElementById('stage');
+	var dirEl = document.getElementById('dir');
+	line.style.strokeDasharray = len;
+	line.style.strokeDashoffset = len;
+	var factor = 0;
+	var stageStart = 0;
+	var stage = 0;
+	var stageEnd = stages[1][0];
+	var stageDir = stages[0][1];
+	var stop = false;
+
+	stageEl.innerHTML = stage;
+	dirEl.innerHTML = stageDir;
+	function step(timestamp) {
+		factor+=0.001;
+		line.style.strokeDashoffset = len*(1-factor);
+		if(factor>=stageEnd) {
+			stage++;
+			if(stage<stages.length-1) {
+
+				stageStart = stages[stage][0];
+				stageEnd   = stages[stage+1][0];
+				stageDir   = stages[stage][1];
+
+				stageEl.innerHTML = stage;
+				dirEl.innerHTML = stageDir;
+			
+			} else {
+				alert('ping');
+				stop = true;
+			}
+		}
+
+		if(!stop) window.requestAnimationFrame(step);
+	}
+
+	window.requestAnimationFrame(step);
+</script>
+</body>
+</html>

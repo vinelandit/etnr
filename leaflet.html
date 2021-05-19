@@ -1,0 +1,643 @@
+<html>
+<head>
+	<title>Leaflet test</title>
+	<link rel="stylesheet" href="leaflet/leaflet.css" />
+	<style>
+		body {
+		    padding: 0;
+		    margin: 0;
+		}
+		html, body, #map {
+		    height: 100%;
+		    width: 100vw;
+		}
+		* {
+			text-align:center;
+		}
+		#mapOuter {
+
+			opacity:0;
+			transition: opacity 0.5s;
+			#pointer-events:none;
+			position:relative;
+		}
+		#map {
+    		transform-origin: 50% 50%;
+			height:300px;
+			width:300px;
+			margin:0 auto;
+			display:block;
+			border-radius:50%;
+			filter:saturate(0.6) sepia(0.1) hue-rotate(-10deg) grayscale(.1);
+			
+		}
+		#mapCenter {
+			position:absolute;
+			left:50%;
+			top:50%;
+			width:20px;
+			height:20px;
+			margin-top:-10px;
+			margin-left:-10px;
+			border-radius:50%;
+			background-color:white;
+			opacity:0.75;
+			z-index:20;
+		}
+		#mapOuter.active {
+			opacity:1;
+		}
+
+		#canvas {
+			width:500px;
+			height:500px;
+		}
+		.leaflet-control-container {
+			display:none;
+		}
+		button {
+			display:block;
+			margin:30px;
+			margin:0 auto;
+			margin-top:30px;
+
+		}
+
+	</style>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+</head>
+<body id="body">
+
+	<button id="start">START</button>
+	<h5 id="info">acc: <span id="acc"></span> dist: <span id="dist"></span></h5>
+	<h3 id="bearingAlpha">&nbsp;</h3>
+	<h3 id="bearingGPS">&nbsp;</h3>
+	<h3 id="corrected">&nbsp;</h3>
+	<h4 id="loc">&nbsp;</h4>
+
+	<div id="mapOuter">
+		<div id="mapCenter"></div>
+		<div id="map">
+			
+		</div>
+	</div>
+<script>
+
+
+
+  console.log('in compass');
+
+  // Shortcut to check, that `variable` is not `undefined` or `null`.
+  var defined = function (variable) {
+    return (variable != null || variable != undefined);
+  };
+
+  // Fire `type` callbacks with `args`.
+  var fire = function (type, args) {
+    var callbacks = self._callbacks[type];
+    for (var i = 0; i < callbacks.length; i++) {
+      callbacks[i].apply(window, args);
+    }
+  };
+
+  var latestPoints = [];
+  var latestBearingGPS = null;
+  var latestAlpha = null;
+  var delta = 0;
+
+  // Calculate average value for last num `array` items;
+  var average = function (array,num=5) {
+    var sum = 0;
+    for (var i = array.length - 1; i > array.length - (num+1); i--) {
+      sum += array[i];
+    }
+    return sum / num;
+  };
+
+  // Compass.js allow you to get compass heading in JavaScript.
+  // We can get compass data by two proprietary APIs and one hack:
+  // * PhoneGap have `navigator.compass` API.
+  // * iOS Safari add `webkitCompassHeading` to `deviceorientation` event.
+  // * We can enable GPS and ask user to go forward. GPS will send
+  //   current heading, so we can calculate difference between real North
+  //   and zero in `deviceorientation` event. Next we use this difference
+  //   to get compass heading only by device orientation.
+  //
+  // Hide compass, when there isn’t any method:
+  //
+  //   Compass.noSupport(function () {
+  //     $('.compass').hide();
+  //   });
+  //
+  // Show instructions for GPS hack:
+  //
+  //   Compass.needGPS(function () {
+  //     $('.go-outside-message').show();
+  //   }).needMove(function () {
+  //     $('.go-outside-message').hide()
+  //     $('.move-and-hold-ahead-message').show();
+  //   }).init(function () {
+  //     $('.move-and-hold-ahead-message').hide();
+  //   });
+  var self = window.Compass = {
+
+    // Name of method to get compass heading. It will have value only after
+    // library initialization from `init` method. So better way to get
+    // method name is to use `init`:
+    //
+    //   Compass.init(function (method) {
+    //     console.log('Compass by ' + method);
+    //   });
+    //
+    // Available methods:
+    // * `phonegap` take from PhoneGap’s `navigator.compass`.
+    // * `webkitOrientation` take from iPhone’s proprietary
+    //   `webkitCompassHeading` proprerty in `DeviceOrientationEvent`.
+    // * `orientationAndGPS` take from device orientation with GPS hack.
+    //
+    // If browser hasn’t access to compass, `method` will be `false`.
+    method: undefined,
+
+    // Watch for compass heading changes and execute `callback` with degrees
+    // relative to magnetic north (from 0 to 360).
+    //
+    // Method return watcher ID to use it in `unwatch`.
+    //
+    //   var watchID = Compass.watch(function (heading) {
+    //     $('.degrees').text(heading);
+    //     // Don’t forget to change degree sign, when rotate compass.
+    //     $('.compass').css({ transform: 'rotate(' + (-heading) + 'deg)' });
+    //   });
+    //
+    //   someApp.close(function () {
+    //     Compass.unwatch(watchID);
+    //   });
+    watch: function (callback) {
+      var id = ++self._lastId;
+
+      self.init(function (method) {
+
+        if ( method == 'phonegap' ) {
+          self._watchers[id] = self._nav.compass.watchHeading(callback);
+
+        } else if ( method == 'webkitOrientation' ) {
+          var watcher = function (e) {
+            callback(e.webkitCompassHeading);
+          };
+          self._win.addEventListener('deviceorientation', watcher);
+          self._watchers[id] = watcher;
+
+        } else if ( method == 'orientationAndGPS' ) {
+          var degrees;
+          var watcher = function (e) {
+            degrees = -e.alpha + self._gpsDiff;
+            if ( degrees < 0 ) {
+              degrees += 360;
+            } else if ( degrees > 360 ) {
+              degrees -= 360;
+            }
+            callback(degrees);
+          };
+          self._win.addEventListener('deviceorientation', watcher);
+          self._watchers[id] = watcher;
+
+        }
+      });
+
+      return id;
+    },
+
+    // Remove watcher by watcher ID from `watch`.
+    //
+    //   Compass.unwatch(watchID)
+    unwatch: function (id) {
+      self.init(function (m) {
+
+        if ( m == 'phonegap' ) {
+          self._nav.compass.clearWatch(self._watchers[id]);
+
+        } else if ( m == 'webkitOrientation' || m == 'orientationAndGPS' ) {
+          self._win.removeEventListener(
+            'deviceorientation', self._watchers[id]);
+
+        }
+        delete self._watchers[id];
+      });
+      return self;
+    },
+
+    // Execute `callback`, when GPS hack activated to detect difference between
+    // device orientation and real North from GPS.
+    //
+    // You need to show to user some message, that he must go outside to be able
+    // to receive GPS signal.
+    //
+    // Callback must be set before `init` or `watch` executing.
+    //
+    //   Compass.needGPS(function () {
+    //     $('.go-outside-message').show();
+    //   });
+    //
+    // Don’t forget to hide message by `needMove` callback in second step.
+    needGPS: function (callback) {
+      self._callbacks.needGPS.push(callback);
+      return self;
+    },
+
+    // Execute `callback` on second GPS hack step, when library has GPS signal,
+    // but user must move and hold the device straight ahead. Library will use
+    // `heading` from GPS movement tracking to detect difference between
+    // device orientation and real North.
+    //
+    // Callback must be set before `init` or `watch` executing.
+    //
+    //   Compass.needMove(function () {
+    //     $('.go-outside-message').hide()
+    //     $('.move-and-hold-ahead-message').show();
+    //   });
+    //
+    // Don’t forget to hide message in `init` callback:
+    //
+    //   Compass.init(function () {
+    //     $('.move-and-hold-ahead-message').hide();
+    //   });
+    needMove: function (callback) {
+      self._callbacks.needMove.push(callback);
+      return self;
+    },
+
+    // Execute `callback` if browser hasn’t any way to get compass heading.
+    //
+    //   Compass.noSupport(function () {
+    //     $('.compass').hide();
+    //   });
+    //
+    // On Firefox detecting can take about 0.5 second. So, it will be better
+    // to show compass in `init`, than to hide it in `noSupport`.
+    noSupport: function (callback) {
+      if ( self.method === false ) {
+        callback();
+      } else if ( !defined(self.method) ) {
+        self._callbacks.noSupport.push(callback);
+      }
+      return self;
+    },
+
+    // Detect compass method and execute `callback`, when library will be
+    // initialized. Callback will get method name (or `false` if library can’t
+    // detect compass) in first argument.
+    //
+    // It is best way to check `method` property.
+    //
+    //   Compass.init(function (method) {
+    //     console.log('Compass by ' + method);
+    //   });
+    init: function (callback) {
+      if ( defined(self.method) ) {
+        callback(self.method);
+        return;
+      }
+      self._callbacks.init.push(callback);
+
+      if ( self._initing ) {
+        return;
+      }
+      self._initing = true;
+
+      if ( self._nav.compass ) {
+        self._start('phonegap');
+
+      } else if ( self._win.DeviceOrientationEvent ) {
+        self._checking = 0;
+        self._win.addEventListener('deviceorientation', self._checkEvent);
+        setTimeout(function () {
+          if ( self._checking !== false ) {
+            self._start(false);
+          }
+        }, 500);
+
+      } else {
+        self._start(false);
+      }
+      return self;
+    },
+
+    // Last watch ID.
+    _lastId: 0,
+
+    // Hash of internal ID to watcher to use it in `unwatch`.
+    _watchers: { },
+
+    // Window object for testing.
+    _win: window,
+
+    // Navigator object for testing.
+    _nav: navigator,
+
+    // List of callbacks.
+    _callbacks: {
+
+      // Callbacks from `init` method.
+      init: [],
+
+      // Callbacks from `noSupport` method.
+      noSupport: [],
+
+      // Callbacks from `needGPS` method.
+      needGPS: [],
+
+      // Callbacks from `needMove` method.
+      needMove: []
+
+    },
+
+    // Is library now try to detect compass method.
+    _initing: false,
+
+    // Difference between `alpha` orientation and real North from GPS.
+    _gpsDiff: undefined,
+
+    // Finish library initialization and use `method` to get compass heading.
+    _start: function (method) {
+      self.method   = method;
+      self._initing = false;
+
+      fire('init', [method]);
+      self._callbacks.init = [];
+
+      if ( method === false ) {
+        fire('noSupport', []);
+      }
+      self._callbacks.noSupport = [];
+    },
+
+    // Tell, that we wait for `DeviceOrientationEvent`.
+    _checking: false,
+
+    // Check `DeviceOrientationEvent` to detect compass method.
+    _checkEvent: function (e) {
+      self._checking += 1;
+      var wait = false;
+
+      if ( defined(e.webkitCompassHeading) ) {
+        // alert(e);
+        self._start('webkitOrientation');
+
+      } else if ( defined(e.alpha) && self._nav.geolocation ) {
+        self._gpsHack();
+
+      } else if ( self._checking > 1 ) {
+        self._start(false);
+
+      } else {
+        wait = true;
+      }
+
+      if ( !wait ) {
+        self._checking = false;
+        self._win.removeEventListener('deviceorientation', self._checkEvent);
+      }
+    },
+
+    // Use GPS to detect difference  between `alpha` orientation and real North.
+    _gpsHack: function () {
+      var first    = true;
+      var alphas   = [];
+      var headings = [];
+
+      fire('needGPS');
+
+      var saveAlpha = function (e) {
+        alphas.push(e.alpha);
+      }
+      self._win.addEventListener('deviceorientation', saveAlpha);
+
+      var success = function (position) {
+        var coords = position.coords
+        if ( !defined(coords.heading) ) {
+          return; // Position not from GPS, no delta yet?
+        }
+
+        if ( first ) {
+          first = false;
+          fire('needMove');
+        }
+
+        if ( coords.speed > .1 ) {
+          headings.push(coords.heading);
+          if ( headings.length >= 3 && alphas.length >= 3 ) {
+            self._win.removeEventListener('deviceorientation', saveAlpha);
+            self._nav.geolocation.clearWatch(watcher);
+
+            self._gpsDiff = average(headings,3) + average(alphas,3);
+            self._start('orientationAndGPS');
+          }
+        } else {
+          headings = [];
+        }
+      };
+      var error = function () {
+        self._win.removeEventListener('deviceorientation', saveAlpha);
+        self._start(false);
+      };
+
+      var watcher = self._nav.geolocation.
+        watchPosition(success, error, { enableHighAccuracy: true });
+    }
+
+  };
+
+
+  	function bearing(a,b) {
+  		console.log('in bearing with ',a,b);
+  		var x = Math.cos(b.lat) * Math.sin(b.lng-a.lng);
+  		var y = Math.cos(a.lat) * Math.sin(b.lat) - Math.sin(a.lat)*Math.cos(b.lat)*Math.cos(b.lng-a.lng);
+  		var result = Math.atan2(x,y) * 180 / Math.PI;
+  		if(result<0) {
+  			result += 360;
+  		}
+  		return result;
+  	}
+  	// Distance between two points
+	function distance(a,b) {
+		var lat1 = a.lat;
+		var lon1 = a.lng;
+		var lat2 = b.lat;
+		var lon2 = b.lng;
+		const R = 6371e3; // metres
+		const toRads = 0.0174533293;
+	    var phi1 = lat1 * Math.PI / 180; // phi1, lambda in radians
+	    var phi2 = lat2 * Math.PI / 180;
+	    var deltaPhi = (lat2 - lat1) * Math.PI / 180;
+	    var deltaLambda = (lon2 - lon1) * Math.PI / 180;
+
+	    var a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+	        Math.cos(phi1) * Math.cos(phi2) *
+	        Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+	    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+	    return R * c; // in metres
+
+	}
+
+    document.getElementById('start').addEventListener('click',function(){
+    	document.getElementById('mapOuter').className='active';
+    	this.style.display='none';
+	    console.log(window.Compass);
+	  	Compass.watch(function(heading) {
+
+	        document.getElementById('bearingAlpha').innerHTML = heading;
+	        latestAlpha = heading;
+
+	        var corrected = latestAlpha - delta;
+
+	        document.getElementById('corrected').innerHTML = 'COR: '+corrected;
+
+	        document.getElementById('map').style.transform = 'rotate('+parseFloat(-corrected)+'deg)';
+	        // console.log('rotate(-'+heading+'deg)');
+
+	      });
+
+	      Compass.noSupport(function(){
+	        console.log('no support');
+	      });
+
+	      Compass.needGPS(function () {
+	        document.getElementById('bearingAlpha').innerHTML = 'Please be outside';          // Step 1: we need GPS signal
+	      }).needMove(function () {
+	        document.getElementById('bearingAlpha').innerHTML = 'Please hold your phone directly in front of you and walk a few steps'; // Step 2: user must go forward
+	      }).init(function () {
+	        // $('.move-and-hold-ahead-message').hide(); // GPS hack is enabled
+	      });     
+
+	    if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+	        	console.log('requesting device orientation permission');
+	            DeviceMotionEvent.requestPermission().then( response => {
+		            
+
+		            if ( response == "granted" ) {
+	                    Compass.init(function (method) {
+					        // document.getElementById('method').innerHTML = method;
+
+					      });
+						
+						
+		            } else {
+	                    alert('device orientation permission not granted');
+		            	
+		            }
+		        })
+		        
+	    } else {
+	    	Compass.init(function (method) {
+		        // document.getElementById('method').innerHTML = method;
+		      });
+	    }
+
+      
+
+      
+
+
+    });
+
+
+
+
+	</script>
+	<script src="leaflet/leaflet.js"></script>
+	<script>
+		var count = 0;
+		var circle = null;
+		
+		// Sentinel Hub WMS service
+		// tiles generated using EPSG:3857 projection - Leaflet takes care of that
+		let baseUrl = "https://services.sentinel-hub.com/ogc/wms/472db677-de10-45f0-9e88-34ef6b4d2bef";
+		let sentinelHub = L.tileLayer.wms(baseUrl, {
+		    tileSize: 512,
+		    attribution: '&copy; <a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
+		    	 	 	 	urlProcessingApi:"https://services.sentinel-hub.com/ogc/wms/f9f27612-5c05-4d61-892e-78d50790da0e", 
+		 	 	 	 	maxcc:47, 
+		 	 	 	 	minZoom:16, 
+		 	 	 	 	maxZoom:16, 
+		 	 	 	 	preset:"SCI", 
+		 	 	 	 	layers:"SCI", 
+		 	 	 	 	time:"2020-10-01/2021-04-17", 
+
+		});
+
+		let overlayMaps = {
+		    'Sentinel Hub WMS': sentinelHub
+		}
+
+		let map = L.map('map', {
+		    center: [55.94671794791918, -3.2136887311935425], // lat/lng in EPSG:4326
+		    zoom: 16,
+		    minZoom:16,
+		    maxZoom:16,
+		    layers: [sentinelHub]
+		});
+
+
+		map.fitWorld();
+
+		function onLocationFound(e) {
+			count++;
+			var radius = e.accuracy / 2;
+
+			document.getElementById('acc').innerHTML = Math.round(e.accuracy);
+			if(circle!==null) {
+				map.removeLayer(circle);
+			}
+			if(e.accuracy<=65) {
+				latestPoints.push(e.latlng);
+				if(latestPoints.length>2) {
+					latestPoints.shift();
+				}
+				if(latestPoints.length>1) {
+					var d = distance(latestPoints[0].lat,latestPoints[0].lng,latestPoints[1].lat,latestPoints[1].lng);
+
+					document.getElementById('dist').innerHTML = d.toFixed(2);
+					if(d>0.5+e.accuracy/32.5) {
+						latestBearingGPS = bearing(latestPoints[0],latestPoints[1]);
+						document.getElementById('bearingGPS').innerHTML = 'GPS: '+latestBearingGPS;
+						delta = latestAlpha - latestBearingGPS; // 80
+
+						console.log('delta',delta);
+
+
+					}
+				}
+				
+			} else {
+
+			}
+			console.log(e);
+			document.getElementById('loc').innerHTML = e.latlng.lat+', '+e.latlng.lng;
+			// circle = L.circle(e.latlng, radius).addTo(map).bindPopup("("+count+") You are within " + radius + " meters from this point").openPopup();
+			map.setView(e.latlng, map.getZoom(), {
+				"animate":true,
+				"pan":{
+					"duration":2
+				}
+			});
+		}
+
+		function onLocationError(e) {
+			alert(e.message);
+		}
+
+		map.on('locationfound', onLocationFound);
+		map.on('locationerror', onLocationError);
+
+		map.locate({
+			setView: true, 
+			watch  : true,
+			maxZoom: 16
+		});
+
+
+
+	</script>
+</body>
+</html>

@@ -7,18 +7,26 @@ class Prompt_recordAudio extends Prompt {
 			this._mimetype = 'audio/mp4';
 		}
 
-		this.tpl = `<div class="prompt recordAudio fullscreen" id="">
-		      <div class="promptBg"></div>
-		      
-		      <div class="center">
-		        
-		        <h3>RECORD AUDIO</h3>
-		        <p>Gain: <span data-bind-value="gain"></span></p>
-		        <p>Now tap 'GO' to record 10 seconds of audio.</p>
-		        <button class="doPrompt">GO</button>
-		        
+		this.tpl = `
+			<div class="prompt recordAudio fullscreen" id="silence">
+		      <div class="page fullscreen hidden">
+		      	<div class="center">
+			      	<div class="unit"><div class="instruction">Find a noise.</div></div>
+			      	<div class="unit"><button class="nextPage">Found it</button></div>
+		      	</div>
 		      </div>
-		  </div>`;
+		  	</div>
+		  	<div class="page fullscreen hidden">
+		      <div class="center">
+		      	<div class="unit"><div class="instruction">Record 10 seconds of the noise.</div></div>
+		      	<div class="timer">
+		      		<canvas width="200" height="200"></canvas>
+		      	</div>
+		      	<div class="unit"><button class="startTimer">Start</button></div>
+		      </div>
+		    </div>
+
+		`;
 	}
 	show() {
 		super.show();
@@ -60,32 +68,6 @@ class Prompt_recordAudio extends Prompt {
 		    // record	
 		    var audioElement = document.getElementById('testAudio');   
 		    var downloadLink = document.getElementById('testDL'); 
-
-		    
-		    /* var webAudioRecorder = new WebAudioRecorder(source, {
-			    workerDir: 'js/libs/',
-			    encoding: 'wav',
-			    options: {
-			        encodeAfterRecord: true
-			    } 
-			});
-
-		    webAudioRecorder.onComplete = (webAudioRecorder, blob) => {
-			    let audioElementSource = window.URL.createObjectURL(blob);
-			    audioElement.src = audioElementSource;
-			    audioElement.controls = true;
-			}
-			webAudioRecorder.onError = (webAudioRecorder, err) => {
-			    console.error(err);
-			}
-
-			console.log('starting recording...');
-			webAudioRecorder.startRecording();
-			window.setTimeout(function(){
-				console.log('stopping recording...');
-				webAudioRecorder.finishRecording();
-			},5000); */
-
 
 			var stopped = false;
 			var shouldStop = false;
@@ -138,7 +120,7 @@ class Prompt_recordAudio extends Prompt {
 
 		}
 
-		this.interface.find('.doPrompt').off('click').on('click',function(e){
+		this.interface.find('.startTimer').on('click',function(e){
 			navigator.mediaDevices.getUserMedia({ audio: true, video: false })
       			.then(handleSuccess).catch(handleError);
 		});

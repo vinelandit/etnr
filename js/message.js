@@ -1,10 +1,14 @@
 class Message {
 	
-	constructor(text,timeout=0) {
+	constructor(text,timeout=0,type='message') {
 		this.text = text;
 		this.timeout = timeout;
 		this.target = $('.messagesOuter');
-		this.tpl = `<div class="message" id="message{id}">{text}</div>`;
+		this.tpl = `<div class="message`;
+		if(type=='error') {
+			this.tpl += ` error`;
+		} 
+		this.tpl += `" id="message{id}">{text}</div>`;
 		this.id = Date.now();
 
 		this.vars = ['id','text'];
@@ -20,13 +24,12 @@ class Message {
 
 		if(timeout>0) {
 			this.timeout = window.setTimeout(function(){
-				_this.hide();
-			},timeout*1000);
+				_this.el.slideUp(250);
+			},timeout);
 		}
 	}
 
 	makeHTML() {
-
 		for(var i=0;i<this.vars.length;i++) {
 			this.html = this.html.replace('{'+this.vars[i]+'}',this[this.vars[i]]);
 		}
