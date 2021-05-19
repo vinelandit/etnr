@@ -1023,7 +1023,7 @@ p#please {
 }
 
 
-@media screen and (max-height:580px) {
+@media screen and (max-height:540px) {
   .instruction,.page button, span.icon {
     font-size:15px;
   }
