@@ -1,7 +1,6 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
-require_once('db.inc.php');
 
 $data = $_REQUEST;
 
@@ -14,7 +13,7 @@ $mediaURL = $_SERVER['SCRIPT_URI'];
 $mediaURL = str_replace('/api','/usermedia',$mediaURL);
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($_ENV['MYSQL_SERVER'], $_ENV['MYSQL_USER'], $_ENV['MYSQL_PASSWORD'], $_ENV['MYSQL_DATABASE']);
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
