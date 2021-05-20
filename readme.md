@@ -37,22 +37,23 @@ JS libraries currently in use by the core App class and Prompt subclasses are in
 
 ## Server-side code (PHP/MySQL)
 
-The /api/ folder contains a PHP/MySQL mini-API with which the client app communicates to upload user-generated media, store the (anonymous) GPS data for a completed experience, and download media for use in a restored session. It also includes a pre-processed database of trees extracted from [Edinburgh Council's online database](https://data.edinburghcouncilmaps.info/datasets/4dfc8f18a40346009b9fc32cbee34039_39). 
-
-The structure and data for the pre-processed trees database, and the structure for the users and userMedia tables, are found in /api/rayadmin_etnr.sql.
+The /api/ folder contains a PHP/MySQL mini-API with which the client app communicates to upload user-generated media, store the (anonymous) GPS data for a completed experience, and download media for use in a restored session.
 
 The users table stores (in JSON format) all pertinent (anonymous) data from the users' experiences, for future use in aggregate data sculpture.
 
 The userMedia table stores metadata about media uploaded by users via the web app. The media themselves are stored in the /api/usermedia subfolder, for which PHP should have full file create/write and folder create privileges.
 
-Excluded from this repo for security is the file /api/db.inc.php which should contain MySQL access credentials in the form
+Excluded from this repo for security are the MySQL access credentials. These the following environment variables should be included in the deployment environment:
 
-```php
-$servername = "IP or localhost";
-$username = "xxxxxxx";
-$password = "xxxxxx";
-$dbname = "xxxxxxx";
 ```
+MYSQL_SERVER=<server IP or hostname>
+MYSQL_DATABASE=<database name>
+MYSQL_USER=<username>
+MYSQL_PASSWORD=<password>
+```
+
+## Running with Docker
+To run this project locally using Docker, install Docker and Docker Compose, then execute `docker-compose -up -d` from inside the root folder. Once the containers are up and running then you can go to `localhost:8100` to test the app. Note: you don't need to set up the environment variables above if you're using Docker.
 
 ## Contributing
 Feel free to open issues.

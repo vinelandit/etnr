@@ -1,0 +1,18 @@
+# ./docker-compose.yml
+
+version: '3.7'
+
+services:
+  db:
+    environment:
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+  
+  web:
+    environment:
+      - MYSQL_SERVER
+      - MYSQL_DATABASE
+      - MYSQL_USER
+      - MYSQL_PASSWORD

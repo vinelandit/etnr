@@ -1,0 +1,24 @@
+stages:
+  - deploy
+  
+deployment:  
+  image: docker:latest
+  stage: deploy
+  tags:
+    - production
+  before_script:
+    - apk add --no-cache docker-compose
+  script:
+    - export MYSQL_SERVER=db
+    - export MYSQL_ROOT_PASSWORD=$CI_MYSQL_ROOT_PASSWORD
+    - export MYSQL_DATABASE=$CI_MYSQL_DATABASE
+    - export MYSQL_USER=$CI_MYSQL_USER
+    - export MYSQL_PASSWORD=$CI_MYSQL_PASSWORD
+    - docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+  only:
+    refs:
+      - deploy-production
+  except:
+    changes:
+      - terraform/*
+
