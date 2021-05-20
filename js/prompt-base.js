@@ -174,7 +174,7 @@ class Prompt {
         if(id!='' && audio.s[this.promptType+'_'+id]) {
             window.setTimeout(function(){
                 audio.s[_this.promptType+'_'+id].play();
-            },1500);
+            },750);
         }
     }
 

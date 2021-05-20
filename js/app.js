@@ -22,7 +22,8 @@ class App {
         	'gpx':[], // will store user's path
         	'stages': [
 	            {
-	                'distance': 100,
+                    'distance': 100,
+                    'time': 100,
 	                'prompts': [
 	                	{
 	                		'type':'noise'
@@ -34,6 +35,7 @@ class App {
 	            },
                 {
                     'distance': 100,
+                    'time': 100,
                     'prompts': [
                         
                         { 'type':'hum' }
@@ -43,6 +45,7 @@ class App {
                 },
                 {
                     'distance': 100,
+                    'time': 100,
                     'prompts': [
                         
                         { 'type':'ground' }
@@ -52,6 +55,7 @@ class App {
                 },
 	            {
 	                'distance': 100,
+                    'time': 100,
 	                'prompts': [
 	                	{ 
 	                		'type':'matchTree'
@@ -63,6 +67,7 @@ class App {
 	            },
 	            {
 	                'distance': 100,
+                    'time': 100,
 	                'prompts': [
 	                	{ 
 	                		'type':'leaf'
@@ -73,6 +78,7 @@ class App {
 	            },
 	            {
                     'distance': 100,
+                    'time': 100,
                     'prompts': [
                         { 
                             'type':'weeds'
@@ -84,6 +90,7 @@ class App {
                 },
                 {
                     'distance': 100,
+                    'time': 100,
                     'prompts': [
                         { 
                             'type':'lichen'
@@ -95,6 +102,7 @@ class App {
                 },
                 {
                     'distance': 100,
+                    'time': 100,
                     'prompts': [
                         { 
                             'type':'lightning'
@@ -107,6 +115,7 @@ class App {
 	            
 	            {
 	                'distance': 100,
+                    'time': 100,
 	                'prompts': [
 	                	{ 
 	                		'type':'wind'
@@ -118,6 +127,7 @@ class App {
 	            },
                 {
                     'distance': 100,
+                    'time': 100,
                     'prompts': [
                         { 
                             'type':'clouds'
@@ -129,6 +139,7 @@ class App {
                 },
                 {
                     'distance': 100,
+                    'time': 100,
                     'prompts': [
                         { 
                             'type':'blue'
@@ -140,6 +151,7 @@ class App {
                 },
 	            {
 	                'distance': 100,
+                    'time': 100,
 	                'prompts': [
 	                	{ 
 	                		'type':'quietness'
@@ -151,6 +163,7 @@ class App {
 	            },
 	            {
 	                'distance': 100,
+                    'time': 100,
 	                'prompts': [
 	                	{ 
 	                		'type':'ocean'
@@ -162,6 +175,7 @@ class App {
 	            },
 	            {
 	                'distance': 100,
+                    'time': 100,
 	                'prompts': [
 	                	{ 
 	                		'type':'breathe'
@@ -172,6 +186,7 @@ class App {
 	            },
 	            {
 	                'distance': 1,
+                    'time': 100,
 	                'prompts': [
 	                	
 	                	{ 'type':'beforeEnd' },
@@ -204,6 +219,8 @@ class App {
 
         this.gpsElapsed = 0;
         this.gpsTick = 0;
+
+        this.timeElapsed = 0;
       	
       	localStorage.setItem('etnr_gpxid',0);
 
@@ -224,6 +241,10 @@ class App {
         this._orientationDone = false;
         this._geolocationDone = false;
 
+        this.progressDaemon = window.setInterval(function(){
+            _this.updateProgress();
+        },1000);
+
     }
 
     initState() {
@@ -235,7 +256,7 @@ class App {
 
     initProgressSVG() {
         this.psvg = $('svg#progressSVG');
-        this.psvg.find('path').hide();
+        this.psvg.find('path').addClass('notransition').hide();
         this.psbg = this.psvg.find('path.bg'+(1+(this.state.stageID%3))).show();
         this.psfg = this.psvg.find('path.fg'+(1+(this.state.stageID%3))).show();
         this.pstg = this.psvg.find('ellipse');
@@ -259,6 +280,16 @@ class App {
         var newHeight = 100*factor;
         
 
+
+        this.psvg.find('path').each(function(){
+            $(this)[0].offsetHeight;
+        });
+
+        var _this = this;
+        window.setTimeout(function(){
+            console.log('removing no transition');
+            _this.psvg.find('path').removeClass('notransition');
+        },500);
 
         this.pshd.css({
             'transform':'scale('+factor+')'
@@ -658,27 +689,24 @@ class App {
 
    	updateProgress() {
 
-   		if(this.state.gpx.length>1) {
-   			if(this.state.stepping && this.state.stage) {				
-	   				
-				console.log(this.delta);
+        this.state.overallTime += 1;
+        broadcast('time',this.state.overallTime);
+		if(this.state.stepping && this.state.stage) {				
+				
 
-				this.state.stage.state.progress += this.delta;
+    		this.state.stage.state.progress += 1;
 
-   				broadcast('stageProgress',.1+.9*(1-Math.min(1,1*this.state.stage.state.progress/this.state.stage.state.distance)));
-   				
-   				broadcast('distance',Math.round(this.state.overallProgress));
-
-   				
-   				// check to see if stage goal reached
-   				if(this.state.stage.state.progress >= this.state.stage.state.distance) {
-   					// pause step counter
-   					this.beginPrompts();
-   				}
-	   			
-   			}
+			broadcast('stageProgress',.1+.9*(1-Math.min(1,1*this.state.stage.state.progress/this.state.stage.state.time)));
+			
+			// check to see if stage goal reached
+			if(this.state.stage.state.progress >= this.state.stage.state.time) {
+				// pause step counter
+				this.beginPrompts();
+			}
+			
+		}
    			
-   		}
+   		
    	}
 
    	beginPrompts() {
@@ -752,9 +780,10 @@ class App {
 		        	broadcast('speed',Math.round(localStorage.getItem('lastSpeed')));
 
 	    			_this.updatePathCanvas();
-		            if(_this.state.stepping) {
+		            
+                    /* if(_this.state.stepping) {
 		            	_this.updateProgress();
-		            }
+		            } */
 
         			localStorage.setItem('etnr_gpxid',_this.state.gpx.length-1);
         			// console.log('gpxid: '+localStorage.getItem('etnr_gpxid'));
@@ -857,8 +886,7 @@ class App {
             
                 console.log('timedelta',timeDelta);
 
-                _this.state.overallTime += timeDelta;
-                broadcast('time',Math.round(_this.state.overallTime));
+                // _this.state.overallTime += timeDelta;
                 
 
                 console.log('dist',rawDelta,'time',timeDelta);
@@ -919,10 +947,10 @@ class App {
                             _this.updatePathCanvas();
                         }
 
-                        if(_this.state.stepping) {
+                        /* if(_this.state.stepping) {
                             // console.log('updating progress');
                             _this.updateProgress();
-                        }
+                        } */
 
                         
                     }

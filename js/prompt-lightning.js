@@ -4,19 +4,29 @@ class Prompt_lightning extends Prompt {
 	constructor(domID,doneCallback) {
 		super('lightning',domID,doneCallback);
 		
-		this._speed = 0;
+		this._bearing = null;
+		this._initBearing = null;
+		this._relBearing = null;
+
+        this.steps = [
+			[0.43,20],
+			[0.68,-100],
+			[1,100]
+		];
+		this.step = 0;
+
+		this.factor = 0;
 		this.tpl = `<div class="prompt lightning fullscreen" id="">
 				      <div class="page fullscreen hidden" data-voiceover="walk">
-				      	<!-- <h5>init bearing <span data-bind-value="initBearing"></span> bearing <span data-bind-value="bearing"></span></h5> -->
 				      	<div class="center">
-				      		<div class="unit"><div class="instruction">Walk in a zig-zag.</div></div>
-					      	
+				      		<div class="unit"><div class="instruction">Walk in a zig-zag. <!-- step <span data-bind-value="step">x</span> rel <span data-bind-value="relBearing"></span> targ <span data-bind-value="targetBearing"></span> --></div></div>
+					      		
 								<svg id="lsvg" width="200" height="350" xmlns="http://www.w3.org/2000/svg">
-								 
           							<path stroke-linecap="round" stroke="#fff" id="svg_1" d="m86.29906,328.31775l69.70093,-178.47663l-113,0l57.02804,-128.84112" stroke-width="7" opacity="1" fill="none"/>
 								 
           							<ellipse cy="100" cx="25" ry="15" rx="15" fill="#fa6565" stroke="none" opacity="1" />
 								  	
+								 	<polygon style="opacity:0;transform-origin:50% 50%;fill:rgba(0,0,0,0.25)" id="triangle" points="100,100 150,200 50,200" />
 								</svg>
 					      	
 			      			<div class="unit startUnit"><button class="halfLeft start">Start</button><button class="halfRight nextPage">Skip</button></div>
@@ -39,12 +49,29 @@ The flash of lighting can make the nearby air up to four times hotter than the S
 		
 	}
 
-	set speed(value) {
-		this._speed = value;
+	set bearing(value) {
+		this._bearing = value;
+		if(this._initBearing==null) {
+			this._initBearing=this._bearing;
+
+		}
+		this._relBearing = value - this._initBearing;
+		if(this._relBearing<0) {
+			this._relBearing += 360;
+		}
+		this._relBearing = this._relBearing % 360;
+
+		if(!isIOS()) this._relBearing = -this._relBearing;
 		
+
+
+		if(this.triangle) {
+			this.triangle.css({'transform':'rotate('+(parseFloat(-this._relBearing+(this.steps[this.step][1])))+'deg)'});
+		}
+		broadcast('relBearing',Math.round(this._relBearing));
 	}
-	get speed() {
-		return this._speed;
+	get bearing() {
+		return this._bearing;
 		
 	}
 
@@ -60,6 +87,7 @@ The flash of lighting can make the nearby air up to four times hotter than the S
 		this.len  = this.line.getTotalLength();
 		this.pointer = this.svg.find('ellipse')[0];
 		this.factor = 0;
+		this.triangle = this.svg.find('#triangle');
 		this.stop = false;
 
 		var targetPoint = this.line.getPointAtLength(0);
@@ -71,21 +99,59 @@ The flash of lighting can make the nearby air up to four times hotter than the S
 
 		function step(timestamp) {
 				
-			_this.factor+=Math.min(_this.speed,5)*.0003;
-				
-	        var targetPoint = _this.line.getPointAtLength(_this.factor*_this.len);
-	        
-
-	        _this.pointer.setAttribute('cx', targetPoint.x);
-	        _this.pointer.setAttribute('cy', targetPoint.y);
-
-
-			if(_this.factor>=.999) {
+			broadcast('step',_this.step);	
+			var margin = 15;
 			
-				_this.nextPage(_this.interface.find('.page:eq(0)'));
-				_this.stop = true;
-				
+			var targetBearing = _this.steps[_this.step][1];
+			if(targetBearing<0) {
+				targetBearing += 360;
 			}
+			targetBearing = targetBearing % 360;
+
+			broadcast('targetBearing',targetBearing);
+
+			var advance = false;
+
+			if(targetBearing>=margin&&targetBearing<=360-margin) {
+				if(Math.abs(_this._relBearing-targetBearing)<=margin) {
+					advance = true;
+				}
+			} else {
+				if(targetBearing<margin) {
+					// target angle between 0 and margin
+					if(_this._relBearing<targetBearing+margin||_this._relBearing>=360-margin+targetBearing) {
+						advance = true;
+					}
+				} else {
+					// target angle between 360-margin and 359.99999
+					if(_this._relBearing<(targetBearing-360+margin)||_this._relBearing>targetBearing-margin) {
+						advance = true;
+					}
+				}
+			}
+			if(advance) {
+
+				_this.factor+=.0009;
+				if(_this.factor>=_this.steps[_this.step][0]) {
+					// next stage
+					_this.step++;
+					_this._initBearing=_this._bearing;
+					
+				}		
+		        var targetPoint = _this.line.getPointAtLength(_this.factor*_this.len);   
+
+		        _this.pointer.setAttribute('cx', targetPoint.x);
+		        _this.pointer.setAttribute('cy', targetPoint.y);
+
+				if(_this.factor>=.999) {
+				
+					_this.nextPage(_this.interface.find('.page:eq(0)'));
+					_this.stop = true;
+					
+				}
+			}
+					
+			
 			
 			
 
@@ -94,6 +160,7 @@ The flash of lighting can make the nearby air up to four times hotter than the S
 
 		this.interface.find('.start').off('click').on('click',function(){
 			window.requestAnimationFrame(step);
+			_this.triangle.animate({'opacity':1},500);
 			_this.interface.find('.startUnit').animate({'opacity':0},'fast');
 		});
 

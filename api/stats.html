@@ -28,10 +28,18 @@
       padding:30px;
       background-color:#666;
     }
+    #promptTarget {
+      position: fixed;
+      right: 0;
+      top: 0;
+      width: 500px;
+      height: 500px;
+    }
   </style>
 </head>
 
 <body class="">
+  <div id="promptTarget"></div>
   <h3>Averages</h3>
     <table id="averages">
       <tr>
@@ -73,6 +81,7 @@
 
   <script src="../js/helpers.js?reload={NOW}"></script>
 
+  <script src="../js/audio.js?reload={NOW}"></script>
   <script src="../js/prompt-base.js?reload={NOW}"></script>
   <script src="../js/prompt-intro.js?reload={NOW}"></script>
   <script src="../js/prompt-matchTree.js?reload={NOW}"></script>
@@ -133,7 +142,7 @@
         var distCount = 0;
 
         for(var i in response.data) {
-          
+          var userID = parseInt(i.replace('user',''));
           var src = response.data[i].state;
           if(src.testGPS) {
             // exclude test runs
@@ -146,6 +155,8 @@
               time = src.gpx[0].timestamp;
             }
             dst.date = new Date(time).toLocaleString();
+
+            dst.date = '<a href="#" class="visualise" data-userID="'+userID+'">'+dst.date+'</a>';
 
 
             var dist = parseFloat(src.overallProgress);
@@ -217,7 +228,6 @@
 
 
 
-        console.log('BORK '+i);
 
         averages.gpsacc = averages.gpsacc.toFixed(2)+'m';
         averages.time = (averages.time/60).toFixed(2)+' mins';
@@ -226,8 +236,19 @@
 
         $('table#averages').append(merge(avTpl,averages));
 
+        console.log('bibbled');
+        $(document).on('click','.visualise',function(e){
+          console.log('bibbles');
+          e.preventDefault();
+          var userID = $(this).attr('data-userid');
+          $('#promptTarget').html('');
+          var p = new Prompt_complete('',function(){},userID);
+        });
+
       },'../api/',-1);
 
+
+      
   </script>
 
 </body>

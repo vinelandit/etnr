@@ -383,6 +383,12 @@ label {
   opacity:0.5;
   z-index:0;
 }
+.notransition {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  transition: none !important;
+}
 .control h3 {
   margin:0;
   padding:0;
@@ -434,6 +440,8 @@ label {
 }
 #progressSVG path {
   display:none;
+  transition: stroke-dashoffset 1s;
+  transition-timing-function:linear;
 }
 .stages ul li .progressInner {
   position:absolute;
@@ -906,6 +914,7 @@ p#please {
   margin:0 auto;
   display:block;
   border-radius:50%;
+  pointer-events:none;
   /* filter:sepia(0.1) hue-rotate(0deg) grayscale(.1) blur(5px) contrast(13) saturate(.6); */
   
 }
@@ -1019,7 +1028,8 @@ p#please {
     width:100px;
     margin-bottom:30px;
     opacity:0.5;
-  }
+  } 
+
 }
 
 

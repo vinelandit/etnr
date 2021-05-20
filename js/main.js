@@ -7,6 +7,10 @@ window.onload = () => {
 	  noSleep.enable();
 	  document.removeEventListener('click', enableNoSleep, false);
 	  console.log('Enabling NoSleep...');
+	  console.log('Trying fullscreen...');
+	  if(isIOS()||isAndroid()) {
+	  	openFullscreen();
+	  }
 	}, false);
 
 	// load intro, which will bootstrap main app when user begins/resumes

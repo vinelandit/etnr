@@ -1,11 +1,31 @@
 class Prompt_complete extends Prompt {
-    constructor(domID,doneCallback) {
+    constructor(domID,doneCallback,userID=null) {
+        
         super('complete',domID,doneCallback);
+        this.userID = userID;
+        this.s = null;
+
+
+        // load final saved state
+        if(userID==null) {
+          this.s = JSON.parse(localStorage.getItem('etnr_state'));
+        } else {
+          // get the state from the database
+          console.log('getting state from database');
+          var _this = this;
+          api('data',{ 'id': userID },function(r){
+            console.log(r);
+            console.log('got state for user '+userID,r.data['user'+userID].state);
+            _this.s = r.data['user'+userID].state;
+            _this.show();
+          },'../api/',-1);
+        }
+
         this.tpl = `
           <div class="prompt complete fullscreen" id="">
               <div class="page fullscreen hidden">
 
-                  <svg style="width:350px;height:350px" width="400" height="400" id="gpsPath"></svg>
+                  <svg style="width:350px;height:450px" width="350" height="450" id="gpsPath"></svg>
                   <button class="nextPage next right"></button>
               </div>
               <div class="page fullscreen hidden">
@@ -102,12 +122,11 @@ class Prompt_complete extends Prompt {
         super.show();
         var _this = this;
 
-        // load final saved state
-        var s = localStorage.getItem('etnr_state');
         var gpx = [];
+        var s = this.s;
 
         if(s!==null&&s!=='') {
-          s = JSON.parse(s);
+          
           gpx = s.gpx;
           console.log('obtained gpx');
           console.log(gpx);
@@ -117,9 +136,8 @@ class Prompt_complete extends Prompt {
         var psi0 = gpx[0].lat;
         var scale = 500000;
 
-        var dims = [350,350];
+        var dims = [350,450];
 
-        
 
         var maxX = null;
         var maxY = null;
@@ -127,14 +145,33 @@ class Prompt_complete extends Prompt {
         var minY = null;
 
         var points = [];
+        var graph = [];
         var times = [];
         var endSpheres = [];
         var spheres = [];
 
+        var graphOrigin = [20,430];
+        var speedFactor = 10;
+
+
+        var totalTime = s.overallTime;
+
+
+        var tFactor = 410/totalTime;
+
+        console.log(totalTime,tFactor);
+
         // calculate xy
         for(var i=0;i<gpx.length;i++) {
+          
+
+
           points.push(this.xy(gpx[i],psi0));
           times.push(gpx[i].time);
+
+
+
+
           if(i>0) {
             points[i][0] -= points[0][0];
             points[i][1] -= points[0][1];
@@ -143,9 +180,20 @@ class Prompt_complete extends Prompt {
             points[i][0] *= scale;
             points[i][1] *= scale;
 
-          } else {
+            var d = distance(gpx[i].lat, gpx[i].lon, gpx[i-1].lat, gpx[i-1].lon);
+            var t = (gpx[i].timestamp - gpx[i-1].timestamp)/1000;
+            var et = (gpx[i].timestamp-gpx[0].timestamp)/1000;
 
-            
+            var speed = d/t;
+            if(speed>15) {
+              speed = 15;
+            }
+            if(!isNaN(speed)&&!isNaN(et)) {
+             graph.push([speed*speedFactor+graphOrigin[0],graphOrigin[1]-(et*tFactor)]);
+            }
+
+          } else {
+            graph.push(graphOrigin);
           }
           if(maxX==null) {
             maxX = points[i][0];
@@ -189,7 +237,7 @@ class Prompt_complete extends Prompt {
 
         var scaleAdjust = Math.max(Math.abs(minX),Math.abs(minY),Math.abs(maxX),Math.abs(maxY));
 
-        scaleAdjust = 80/scaleAdjust;
+        scaleAdjust = 120/scaleAdjust;
 
 
         for(var i=1;i<gpx.length;i++) {
@@ -206,7 +254,7 @@ class Prompt_complete extends Prompt {
 
         var timeRange = (times[times.length-1] - times[0])/1000;
 
-        var timeScale = 40/timeRange;
+        var timeScale = 10/timeRange;
 
         console.log(timeRange);
 
@@ -217,7 +265,7 @@ class Prompt_complete extends Prompt {
 
 
 
-        console.log(points,times);
+        console.log(graph,times);
         var currentStage = -1;
         var isStepping = true;
 
@@ -235,12 +283,12 @@ class Prompt_complete extends Prompt {
             if(isStepping&&!gpx[i].stepping) {
               // switching from stepping to not stepping, i.e. prompts for this stage; show sphere
               // place end sphere
-              spheres.push([ points[i], gpx[i].stageType ]);
+              spheres.push([ graph[i], gpx[i].stageType ]);
             }
             if(i==0||i==gpx.length-1) {
               // place end sphere
               
-              endSpheres.push(points[i]);
+              endSpheres.push(graph[i]);
               
             } 
 
@@ -324,12 +372,12 @@ class Prompt_complete extends Prompt {
             ? `M ${point[0]},${point[1]}`
             : `${acc} ${command(point, i, a)}`
           , '')
-          return `<path d="${d}" fill="none" stroke="white" stroke-width="2" />`;
+          return `<path d="${d}" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1" />`;
         }
 
         const svg = document.querySelector('svg#gpsPath');
 
-        svg.innerHTML = svgPath(points, bezierCommand);
+        svg.innerHTML = svgPath(graph, bezierCommand);
 
         console.log('SPHERES',spheres);
 

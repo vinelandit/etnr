@@ -37,12 +37,24 @@ function broadcast(identifier,value) {
 	});
 }
 
-
+function openFullscreen() {
+	var elem = document.documentElement;
+	if (elem.requestFullscreen) {
+		elem.requestFullscreen();
+	} else if (elem.webkitRequestFullscreen) { /* Safari */
+		elem.webkitRequestFullscreen();
+	} else if (elem.msRequestFullscreen) { /* IE11 */
+		elem.msRequestFullscreen();
+	}
+	if(screen.orientation) {
+		screen.orientation.lock('portrait');
+	}
+}
 function merge(tpl,data) {
     // merge data object into {placeholders} in tpl HTML
     for(var key in data) {
-        var value = data[key];
-        var regex = new RegExp("\{"+key+"\}","g");
+    	var value = data[key];
+    	var regex = new RegExp("\{"+key+"\}","g");
         //regex = "{"+key+"}";
         tpl = tpl.replace(regex,value);
     }
@@ -51,14 +63,14 @@ function merge(tpl,data) {
 
 
 function bearing(a,b) {
-  console.log('in bearing with ',a,b);
-  var x = Math.cos(b.lat) * Math.sin(b.lng-a.lng);
-  var y = Math.cos(a.lat) * Math.sin(b.lat) - Math.sin(a.lat)*Math.cos(b.lat)*Math.cos(b.lng-a.lng);
-  var result = Math.atan2(x,y) * 180 / Math.PI;
-  if(result<0) {
-    result += 360;
-  }
-  return result;
+	console.log('in bearing with ',a,b);
+	var x = Math.cos(b.lat) * Math.sin(b.lng-a.lng);
+	var y = Math.cos(a.lat) * Math.sin(b.lat) - Math.sin(a.lat)*Math.cos(b.lat)*Math.cos(b.lng-a.lng);
+	var result = Math.atan2(x,y) * 180 / Math.PI;
+	if(result<0) {
+		result += 360;
+	}
+	return result;
 }
 function gpsToPoint(point,origin,center,scale=10) {
 	// first point maps to this.pc.center
@@ -69,7 +81,7 @@ function gpsToPoint(point,origin,center,scale=10) {
 
 // Processing-style map function
 function mapr(value, low1, high1, low2, high2) {
-    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+	return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
 
 // Distance between two points
@@ -83,8 +95,8 @@ function distance(lat1, lon1, lat2, lon2) {
     var deltaLambda = (lon2 - lon1) * Math.PI / 180;
 
     var a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
-        Math.cos(phi1) * Math.cos(phi2) *
-        Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+    Math.cos(phi1) * Math.cos(phi2) *
+    Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     return R * c; // in metres
@@ -132,19 +144,19 @@ function api(command,data,callback,overrideEndpoint=null,overrideID=null) {
 
 
 function decycle(obj, stack = []) {
-    if (!obj || typeof obj !== 'object')
-        return obj;
-    
-    if (stack.includes(obj))
-        return null;
+	if (!obj || typeof obj !== 'object')
+		return obj;
 
-    let s = stack.concat([obj]);
+	if (stack.includes(obj))
+		return null;
 
-    return Array.isArray(obj)
-        ? obj.map(x => decycle(x, s))
-        : Object.fromEntries(
-            Object.entries(obj)
-                .map(([k, v]) => [k, decycle(v, s)]));
+	let s = stack.concat([obj]);
+
+	return Array.isArray(obj)
+	? obj.map(x => decycle(x, s))
+	: Object.fromEntries(
+		Object.entries(obj)
+		.map(([k, v]) => [k, decycle(v, s)]));
 }
 
 /******** REMOTE ERROR LOGGING ********/
@@ -182,14 +194,14 @@ function isOpera() {
 
 function isIOS() {
 
-  return [
-    'iPad Simulator',
-    'iPhone Simulator',
-    'iPod Simulator',
-    'iPad',
-    'iPhone',
-    'iPod'
-  ].includes(navigator.platform)
+	return [
+	'iPad Simulator',
+	'iPhone Simulator',
+	'iPod Simulator',
+	'iPad',
+	'iPhone',
+	'iPod'
+	].includes(navigator.platform)
   // iPad on iOS 13 detection
   || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
 }

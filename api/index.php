@@ -186,7 +186,7 @@ if($rKey!=$key) {
             $sq = "SELECT * FROM users WHERE state!='' AND ";
 
             if($id>0) {
-                $sq .= " id=$id ";
+                $sq .= " userID=$id ";
             } else {
                 $sq .= " created BETWEEN '$from' AND '$to' ";
             }
