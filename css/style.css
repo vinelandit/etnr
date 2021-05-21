@@ -14,7 +14,14 @@ body,html {
   box-sizing:border-box;
 }
 
-
+button.autoNext {
+  position:fixed;
+  opacity:0;
+  left:-5000px;
+  top:0;
+  left:0;
+  z-index:10000000;
+}
 
 #videoHolder {
       width: 250px;
@@ -350,7 +357,10 @@ label {
   color:white;
   border:1px solid white;
 }
-
+.intro .page .terms button {
+  color:black;
+  border-color:black;
+}
 .unit {
   padding-top:30px;
   padding-bottom:30px;
@@ -474,19 +484,26 @@ a:hover {
   position: absolute;
   bottom: 0;
   top: 70px;
-  margin-bottom: 0;
   color: black;
   text-align: left;
   padding-top: 5px;
-  padding-bottom: 75px;
   overflow-y: scroll;
 }
+.terms button {
+  display:block;
+  margin:0 auto;
+}
+.agreeHolder {
+  position:absolute;
+  bottom:20px;
+  width:100%;
+  left:0;
+  z-index:1000;
+}
 .agree {
-  position: absolute;
-  bottom: 25px;
-  z-index: 1000;
-  left: 50%;
-  margin-left: -25px;
+  margin:0 auto;
+  display:block;
+  
   opacity: 0.4;
 }
 .agree.active {
@@ -526,14 +543,21 @@ a:hover {
   transform-origin: 0 0;
 }
 #vegMatrix {
-  width:300px;
-  height:300px;
+  width:254px;
+  height:254px;
   margin:0 auto;
+  border:2px solid white;
 }
 .vegCell {
-  width:60px;
-  height:60px;
+  width:50px;
+  height:50px;
   float:left;
+}
+.vegCell.green {
+  background-color:#56ba53;
+}
+.vegCell.grey {
+  background-color:#dbdbdb;
 }
 .vegBall {
   width:60px;
@@ -899,13 +923,17 @@ ellipse.blue
   opacity:0.66;
 }
 p#please {
-      background-color: rgba(0,0,0,0.66);
+    background-color: rgba(0,0,0,0.66);
     padding: 10px;
     color: white;
     font-size: 14px;
     text-transform: uppercase;
     border-radius: 10px;
     margin-top: 17.5px;
+    width: auto;
+    margin-left: 5%;
+    margin-right: 5%;
+    text-align: center;
 }
 #map {
   transform-origin: 50% 50%;

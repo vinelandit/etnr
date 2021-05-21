@@ -7,15 +7,10 @@ class Prompt_ground extends Prompt {
 		      <div class="page fullscreen hidden" data-voiceover="try">
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">Try walking on three different surfaces.</div></div>
-			      	<div class="unit"><button class="nextPage next"></button></div>
-		      	</div>
-		      </div>
-		      <div class="page fullscreen hidden">
-		      	<div class="center">
-			      	<div class="unit"><div class="instruction">Try walking on three different surfaces.</div></div>
 			      	<div class="unit"><button class="nextPage">Done</button></div>
 		      	</div>
 		      </div>
+		      
 
 		      <div class="page fullscreen hidden" data-voiceover="did">
 		      	<div class="center">
@@ -23,6 +18,7 @@ class Prompt_ground extends Prompt {
 			      	<div class="unit"><button class="halfLeft gotoPage" data-page="pick">Yes</button><button class="halfRight nextPage">No</button></div>
 		      	</div>
 		      </div>
+
 		      <div class="page fullscreen hidden" data-voiceover="find">
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">Find soil nearby.</div></div>
@@ -34,7 +30,7 @@ class Prompt_ground extends Prompt {
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">Pick up some soil and hold it. What does it feel like?
 Slowly release the soil from your hand.</div></div>
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 		      	</div>
 		      </div>
 
@@ -50,7 +46,7 @@ Slowly release the soil from your hand.</div></div>
 							Soil is much more than the ground we walk on.
 						</div>
 					</div>
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 		      	</div>
 		      </div>
 		      

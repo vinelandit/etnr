@@ -182,6 +182,9 @@ class Prompt_complete extends Prompt {
         super.show();
         var _this = this;
 
+        // enforce height to stop Android devices shrinking the viewport when the keyboard is displayed
+        this.interface.css({'min-height':$(document).height()});
+
         // handle newsletter subscribe requests
         this.interface.find('form').on('submit',function(e){
           e.preventDefault();

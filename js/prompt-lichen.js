@@ -26,7 +26,7 @@ class Prompt_lichen extends Prompt {
 <p>They arose millions of years ago as a mutual becoming of algae and fungi that live and thrive together. An idea so foreign, that we only created a word for it in 1879: symbiosis.</p>
 
 </div></div> 
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 		      	</div>
 		      </div>
 		      
@@ -34,10 +34,5 @@ class Prompt_lichen extends Prompt {
 		  </div>`;
 	}
 	
-	show() {
-		super.show();
-		// load third batch of background audio
-		audio.backgroundLoad(3);
-	}
 }
 

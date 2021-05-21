@@ -13,14 +13,14 @@ class Prompt_quietness extends Prompt {
 		    <div class="page fullscreen hidden" data-voiceover="search">
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">Search for quietness nearby.</div></div>
-			      	<div class="unit"><button class="timedNextPage next" data-delay-when="after" data-delay="3000"></button></div>
+			      	<div class="unit"><button class="timedNextPage next" data-delay-when="after" data-delay="1000"></button></div>
 		      	</div>
 		    </div>
 		  	
 		  	<div class="page fullscreen hidden" data-voiceover="dont">
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">Don't rush. Take the outside in.</div></div>
-			      	<div class="unit"><button class="timedNextPage next beforeRecord" data-delay-when="after" data-delay="3000"></button></div>
+			      	<div class="unit"><button class="nextPage next beforeRecord" data-delay-when="after" data-delay="1000"></button></div>
 		      	</div>
 		      
 		  	</div>
@@ -36,14 +36,14 @@ class Prompt_quietness extends Prompt {
 		    <div class="page fullscreen hidden" data-voiceover="thank">
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">Thank you. In our world, it can be difficult to find quietness.</div></div>
-			      	<div class="unit"><button class="gotoPage next" data-page="final"></button></div>
+			      	<div class="unit"><button class="autoNext gotoPage next" data-page="final"></button></div>
 		      	</div>
 		      
 		  	</div>
 		  	<div class="page fullscreen hidden in" data-voiceover="in">
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">In our world, it can be difficult to find quietness. Try to notice it in your everyday life.</div></div>
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 		      	</div>
 		      
 		  	</div>
@@ -53,7 +53,7 @@ class Prompt_quietness extends Prompt {
 The ocean's soundscape 
 is now composed of ship, submarine and building noise. These intruding noises drown out the sounds needed to feed, navigate and communicate, threatening ocean life. 
 </div></div>
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 		      	</div>
 		      
 		  	</div>
@@ -144,10 +144,10 @@ is now composed of ship, submarine and building noise. These intruding noises dr
       			.then(handleSuccess).catch(handleError);
 		});
 
-		this.interface.find('.beforeRecord').on('mousedown',function(){
+		this.interface.find('.beforeRecord').on('click',function(){
 			window.setTimeout(function(){
 				_this.interface.find('.startUnit').animate({'opacity':1},'fast');
-			},6500);
+			},3000);
 		});
 
 		this.interface.find('.startUnit button.gotoPage').click(function(){

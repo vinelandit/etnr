@@ -17,7 +17,7 @@ class Prompt_clouds extends Prompt {
 			<div class="page fullscreen hidden" data-voiceover="look">
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">Look up at the sky.</div></div>
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 		      	</div>
 		      </div>
 		      
@@ -31,7 +31,7 @@ class Prompt_clouds extends Prompt {
 		      <div class="page fullscreen hidden" data-voiceover="drifting">
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">Drifting through skies, clouds are ever present. These shapeshifting giants weigh up to 500 tonnes, composed mostly of water and ice.</div></div>
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 		      	</div>
 		      </div>
 		      
@@ -77,7 +77,7 @@ Just like you have left an invisible trace of your journey in the air around you
 Thin, linear tracks that become visible from space.
 
 </div></div>
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 		      	</div>
 		      </div>
 		</div>`;
@@ -88,14 +88,7 @@ Thin, linear tracks that become visible from space.
 	}
 	
 
-	set speed(value) {
-		this._speed = value;
-		
-	}
-	get speed() {
-		return this._speed;
-		
-	}
+	
 	show() {
 
 		super.show();
@@ -128,7 +121,7 @@ Thin, linear tracks that become visible from space.
 		function step(timestamp) {
 
 			
-			_this.factor+=Math.min(_this._speed,5)*.0003;
+			_this.factor+=.0009;
 			_this.trail.style.strokeDashoffset = _this.len*(1-_this.factor);
 			if(_this.factor>=1) {
 			

@@ -13,7 +13,7 @@ class Prompt_hum extends Prompt {
 		      <div class="page fullscreen hidden" data-voiceover="some">
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">Some research suggests that animals hum to let each other know they are amongst kin. Are there other ways we could connect?</div></div>
-			      	<div class="unit"><button class="timedNextPage next" data-delay-when="before" data-delay="3000"></button></div>
+			      	<div class="unit"><button class="next autoNext nextPage"></button></div>
 		      	</div>
 		      </div>
 		      

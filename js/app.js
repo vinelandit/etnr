@@ -22,40 +22,40 @@ class App {
         	'gpx':[], // will store user's path
         	'stages': [
 	            {
-                    'distance': 100,
-                    'time': 100,
+                    'distance': 0,
+                    'time': 0,
 	                'prompts': [
 	                	{
 	                		'type':'noise'
 	                	},
 	                	
 	                ],
-                    'message':'Please continue your walk',
+                    'message':'Carry on with your journey',
 	                'type':'nudge'
 	            },
                 {
-                    'distance': 100,
-                    'time': 100,
+                    'distance': 20,
+                    'time': 20,
                     'prompts': [
                         
                         { 'type':'hum' }
                     ],
                     'type':'prompt',
-                    'message':'Please continue with your walk'
+                    'message':"Let's keep moving"
                 },
                 {
-                    'distance': 100,
-                    'time': 100,
+                    'distance': 45,
+                    'time': 45,
                     'prompts': [
                         
                         { 'type':'ground' }
                     ],
                     'type':'prompt',
-                    'message':'Please continue your journey'
+                    'message':"Let's keep going"
                 },
 	            {
-	                'distance': 100,
-                    'time': 100,
+	                'distance': 30,
+                    'time': 30,
 	                'prompts': [
 	                	{ 
 	                		'type':'matchTree'
@@ -63,11 +63,11 @@ class App {
 	                	
 	                ],
 	                'type':'prompt',
-                    'message':'Carry on walking'
+                    'message':'Carry on with your journey'
 	            },
 	            {
 	                'distance': 100,
-                    'time': 100,
+                    'time': 30,
 	                'prompts': [
 	                	{ 
 	                		'type':'leaf'
@@ -78,7 +78,7 @@ class App {
 	            },
 	            {
                     'distance': 100,
-                    'time': 100,
+                    'time': 30,
                     'prompts': [
                         { 
                             'type':'weeds'
@@ -86,11 +86,11 @@ class App {
                         
                     ],
                     'type':'nudge',
-                    'message':'Please continue walking'
+                    'message':"Let's continue the walk"
                 },
                 {
                     'distance': 100,
-                    'time': 100,
+                    'time': 30,
                     'prompts': [
                         { 
                             'type':'lichen'
@@ -102,7 +102,7 @@ class App {
                 },
                 {
                     'distance': 100,
-                    'time': 100,
+                    'time': 45,
                     'prompts': [
                         { 
                             'type':'lightning'
@@ -115,7 +115,7 @@ class App {
 	            
 	            {
 	                'distance': 100,
-                    'time': 100,
+                    'time': 30,
 	                'prompts': [
 	                	{ 
 	                		'type':'wind'
@@ -127,7 +127,7 @@ class App {
 	            },
                 {
                     'distance': 100,
-                    'time': 100,
+                    'time': 45,
                     'prompts': [
                         { 
                             'type':'clouds'
@@ -139,7 +139,7 @@ class App {
                 },
                 {
                     'distance': 100,
-                    'time': 100,
+                    'time': 45,
                     'prompts': [
                         { 
                             'type':'blue'
@@ -151,7 +151,7 @@ class App {
                 },
 	            {
 	                'distance': 100,
-                    'time': 100,
+                    'time': 30,
 	                'prompts': [
 	                	{ 
 	                		'type':'quietness'
@@ -163,7 +163,7 @@ class App {
 	            },
 	            {
 	                'distance': 100,
-                    'time': 100,
+                    'time': 60,
 	                'prompts': [
 	                	{ 
 	                		'type':'ocean'
@@ -175,26 +175,19 @@ class App {
 	            },
 	            {
 	                'distance': 100,
-                    'time': 100,
+                    'time': 20,
 	                'prompts': [
 	                	{ 
 	                		'type':'breathe'
-	                	}
+	                	},
+                        { 'type':'beforeEnd' },
+                        
+                        { 'type': 'complete'}
 	                	
 	                ],
 	                'type':'prompt'
-	            },
-	            {
-	                'distance': 1,
-                    'time': 100,
-	                'prompts': [
-	                	
-	                	{ 'type':'beforeEnd' },
-	                	
-	                	{ 'type': 'complete'}
-	                ],
-	                'type':'nudge'
 	            }
+	            
 	        ]
         };
 
@@ -642,7 +635,7 @@ class App {
 				localStorage.setItem('etnr_userid','pending');
 				this.requestId();
 				this.initState();
-                audio.playLoop('intro');
+                // audio.playLoop('intro');
 			} else {
 				console.log('initialising with stored user id '+this.id);
 				this.loadState();
@@ -737,6 +730,7 @@ class App {
     initGPS() {
 
         var _this = this;
+        var now = Date.now();
 
     	if(this.testGPS) {
 
@@ -744,7 +738,7 @@ class App {
     			_this.state.gpx.push({
 	    			'lat':0.0,
 	    			'lon':0.0,
-	    			'timestamp':Date.now(),
+	    			'timestamp':now,
 	    			'proc':false,
 	    			'stage':_this.state.stageID,
                     'stageType':_this.state.stages[_this.state.stageID].prompts[0].type,
@@ -766,7 +760,7 @@ class App {
 	    			_this.state.gpx.push({
 		            	'lat':_this.state.gpx[_this.state.gpx.length-1].lat+dx,
 		            	'lon':_this.state.gpx[_this.state.gpx.length-1].lon+dy,
-		            	'timestamp':Date.now(),
+		            	'timestamp':now,
 		            	'proc':false,
 		            	'stepping':_this.state.stepping,
 	    				'stage':_this.state.stageID,
@@ -841,6 +835,7 @@ class App {
 
     gpsCallback(position) {
 
+        var now = Date.now();
         var _this = this;
         console.log('receiving event from sensors GPS',position);
         if(typeof _this._msgGPS !== 'undefined') {
@@ -852,7 +847,7 @@ class App {
             'accuracy':position.accuracy,
             'latitude':position.latlng.lat,
             'longitude':position.latlng.lng,
-            'timestamp':position.timestamp,
+            'timestamp':now,
             'proc':false,
             'stepping':_this.state.stepping,
             'stage':_this.state.stageID,
@@ -867,7 +862,7 @@ class App {
         if(_this.firstRunGPS) {
             _this.firstRunGPS = false;
             console.log('first run gps');
-            _this.gpsInitTime = position.coords.timestamp;
+            _this.gpsInitTime = now;
             _this.geolocationDone();
             _this._msgStabilise = new Message('Awaiting GPS stabilisation...');
             
@@ -878,7 +873,7 @@ class App {
             
             // console.log(position.coords,lastlat,lastlon);
             // console.log('rawDelta',rawDelta);
-            var now = position.coords.timestamp;
+            
             
             var timeDelta = 0;
             if(_this.gpsTick>0) {
@@ -909,7 +904,7 @@ class App {
                         'lat':position.coords.latitude,
                         'lon':position.coords.longitude,
                         'accuracy':position.coords.accuracy,
-                        'timestamp':position.coords.timestamp,
+                        'timestamp':now,
                         'proc':false,
                         'stepping':_this.state.stepping,
                         'stage':_this.state.stageID,

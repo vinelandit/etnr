@@ -7,7 +7,7 @@ class Prompt_breathe extends Prompt {
 			      <div class="center">
 			      	<div class="unit"><div class="instruction">Inhale and Exhale</div></div>
 			      	
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 			      </div>
 		      </div>
 		     
@@ -27,14 +27,14 @@ class Prompt_breathe extends Prompt {
 These wandering plants individually live only a few days, though they can bloom collectively for several weeks in colourful swirls, large enough to be seen from outer space.
 
 Their cells store a third of the world’s carbon through a cycle of birth and death.</div></div>
-			      	<div class="unit"><button class="next nextPage"></button></div>
+			      	<div class="unit"><button class="autoNext next nextPage"></button></div>
 			      </div>
 		      </div>
 		      <div class="page fullscreen hidden" data-voiceover="this2">
 			      <div class="center">
 			      	<div class="unit"><div class="instruction">This is end of the walk.</div></div>
 			      	
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 			      </div>
 		      </div>
 		  </div>`;

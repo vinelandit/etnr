@@ -28,18 +28,21 @@ class Prompt_complete extends Prompt {
                   <svg style="width:350px;height:450px" width="350" height="450" id="gpsPath"></svg>
                   <button class="nextPage next right"></button>
               </div>
-              <div class="page fullscreen hidden">
+              <div class="page fullscreen hidden" data-voiceover="journey">
                   <div class="center">
-                    <div class="unit"><div class="instruction">The journey you just took, through land, air and sea, explores the local, subtle ways, that global climate events and their entanglements manifest locally.</div></div>
-                    <div class="unit"><button class="nextPage next"></button></div>
+                    <div class="unit"><div class="instruction">The journey you just took, through land, air and sea, reflects the subtle ways that can connect global carbon cycles to local environment.</div></div>
+                    <div class="unit"><button class="autoNext nextPage next"></button></div>
                   </div>
               </div>
-              <div class="page fullscreen hidden">
+              <div class="page fullscreen hidden" data-voiceover="traces">
                   <div class="center">
-                    <div class="unit"><div class="instruction">From the soil you held to the tree you rested beneath. From the quietness you sought to the breaths you took. Small, subtle gestures, anchored within the current climate emergency; a request to stop and consider, how we relate with, in, and to the ecological complexity that we are facing regarding climate change.</div></div>
-                    <div class="unit"><button class="nextPage next"></button></div>
+                    <div class="unit"><div class="instruction">
+The traces of your personal journey have helped form a collective call to action. Every time you walk with the experience, this artwork will grow.</div></div>
+                    <div class="unit"><button class="autoNext nextPage next"></button></div>
                   </div>
               </div>
+
+
               <div class="page fullscreen hidden">
                   <div class="center">
                     <div class="unit"><div class="instruction">Thank you for taking part in this pilot experience. To finish we would greatly appreciate your opinion. Please answer the 3 short questions on the next page.</div></div>
@@ -121,6 +124,10 @@ class Prompt_complete extends Prompt {
     show() {
         super.show();
         var _this = this;
+
+        // enforce height to stop Android devices shrinking the viewport when the keyboard is displayed
+        this.interface.css({'min-height':$(document).height()});
+
 
         var gpx = [];
         var s = this.s;
@@ -299,7 +306,7 @@ class Prompt_complete extends Prompt {
 
 
         // The smoothing ratio
-        const smoothing = 0.2;
+        const smoothing = 0.05;
 
         
 

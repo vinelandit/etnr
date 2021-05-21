@@ -132,8 +132,10 @@ class Prompt {
     }
 
     nextPage(thisPage) {
+        console.log('in next page');
+        console.log(thisPage);
         var el = thisPage.next();
-        if(this.promptType!=='quietness'&&this.promptType!=='noise'&&this.promptType!=='hum') {
+        if((thisPage.find('.autoNext').length==0) && this.promptType!=='quietness'&&this.promptType!=='noise') {
             audio.s.button.play();
         }
         if(el.length) {
@@ -173,7 +175,16 @@ class Prompt {
         var _this = this;
         if(id!='' && audio.s[this.promptType+'_'+id]) {
             window.setTimeout(function(){
-                audio.s[_this.promptType+'_'+id].play();
+                var aid = audio.s[_this.promptType+'_'+id].play();
+                console.log('VOICEOVER audio id '+aid);
+                var b = page.find('.autoNext');
+                if(b.length) {
+                    console.log('registering autonext for end of voiceover '+id);
+                    audio.autoNexts['vo'+aid] = {
+                        'button':b,
+                        'sound':audio.s[_this.promptType+'_'+id]
+                    };
+                }
             },750);
         }
     }
@@ -341,9 +352,9 @@ class Prompt_beforeEnd extends Prompt {
         this.tpl = `
 
         <div class="prompt beforeEnd fullscreen" id="">
-                <div class="page fullscreen hidden">
+                <div class="page fullscreen hidden" data-voiceover="thank">
                   <div class="center">
-                    <div class="unit"><div class="instruction">Thank you for completing AWEN. Final text to be added here.</div></div>
+                    <div class="unit"><div class="instruction">Thank you. You have completed AWEN.</div></div>
                     <div class="unit"><button class="nextPage">Visualise my journey</button></div>
                   </div>
                 </div>

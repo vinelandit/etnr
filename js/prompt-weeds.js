@@ -7,7 +7,7 @@ class Prompt_weeds extends Prompt {
 		      <div class="page fullscreen hidden" data-voiceover="follow">
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">Look for plants out of place.</div></div>
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 		      	</div>
 		      </div>
 		      <div class="page fullscreen hidden" data-voiceover="plant">
@@ -19,7 +19,7 @@ Why are dandelions weeds, but daffodils flowers?
 What if it was the other way around?
 
 </div></div>
-			      	<div class="unit"><button class="timedNextPage next" data-delay-when="before" data-delay="3000"></button></div>
+			      	<div class="unit"><button class="nextPage autoNext next"></button></div>
 		      	</div>
 		      </div>
 		  </div>`;
@@ -29,7 +29,12 @@ What if it was the other way around?
 	initSound() {
 		audio.stopLoop();
 		audio.playLoop('lichen');
+
 	}
-	
+	complete() {
+		// load third batch of background audio
+		audio.backgroundLoad(3);
+		super.complete();
+	}
 }
 

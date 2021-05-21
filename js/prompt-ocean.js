@@ -48,14 +48,14 @@ class Prompt_ocean extends Prompt {
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">In Scotland, you are never more than 40 miles from the sea.</div></div>
 			      	
-			      	<div class="unit"><button class="gotoPage next" data-page="zone-row"></button></div>
+			      	<div class="unit"><button class="autoNext gotoPage next" data-page="zone-row"></button></div>
 		      	</div>
 		    </div>
 		    <div class="page fullscreen hidden zone-uk" data-voiceover="uk">
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">In the UK, you are never more than 70 miles from the sea.</div></div>
 			      	
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 		      	</div>
 		    </div>
 		    
@@ -65,7 +65,7 @@ class Prompt_ocean extends Prompt {
 At what distance would you like to be?
 </div></div>
 			      	
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 		      	</div>
 		    </div>
 		    
@@ -84,14 +84,14 @@ At what distance would you like to be?
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">In Scotland, you are never more than 40 miles from the sea.</div></div>
 			      	
-			      	<div class="unit"><button class="gotoPage next" data-page="zone-row"></button></div>
+			      	<div class="unit"><button class="autoNext gotoPage next" data-page="zone-row"></button></div>
 		      	</div>
 		    </div>
 		    <div class="page fullscreen hidden zone-uk" data-voiceover="uk">
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">In the UK, you are never more than 70 miles from the sea.</div></div>
 			      	
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 		      	</div>
 		    </div>
 		    
@@ -101,7 +101,7 @@ At what distance would you like to be?
 At what distance would you like to be?
 </div></div>
 			      	
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 		      	</div>
 		    </div>
 		      `;

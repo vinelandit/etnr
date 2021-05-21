@@ -18,7 +18,7 @@ Imagine the main vein is your path.
 The veins are a map. 
 Let it be your guide.
 </div></div>
-			      	<div class="unit"><button class="next gotoPage" data-page="explanation"></button></div>
+			      	<div class="unit"><button class="next autoNext gotoPage" data-page="explanation"></button></div>
 		      	</div>
 		      </div>
 
@@ -27,7 +27,7 @@ Let it be your guide.
 		      <div class="page no fullscreen hidden" data-voiceover="next">
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">Next time you come across a leaf, try to follow its veins like a map. Let it be your guide.</div></div>
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 		      	</div>
 		      </div>
 		      
@@ -41,7 +41,7 @@ Let it be your guide.
 
 
 			      	</div></div>
-			      	<div class="unit"><button class="nextPage next"></button></div>
+			      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 		      	</div>
 		      </div>
 		  </div>`;

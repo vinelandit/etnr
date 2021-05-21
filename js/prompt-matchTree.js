@@ -78,12 +78,19 @@ class Prompt_matchTree extends Prompt {
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">
 			      		<p>Trees store carbon and produce part of the oxygen we breathe, splitting carbon dioxide molecules using sunlight.</p>
-			      		<p>That is why some people say trees are made of air and channel light.</p>
+			      		<p>This is why some people say trees are made of air and channel light.</p>
 			      		<p>In Tsimane culture in the Amazon, when someone dies their spirit goes into the nearest tree. They become a being of light, establishing a practice of care.</p>
 			      	</div></div>
-			      	<div class="unit"><button class="next timedNextPage" data-delay-when="before" data-delay="5000"></button></div>
+			      	<div class="unit"><button class="next nextPage autoNext"></button></div>
 		      	</div>
 		      </div>
+		      <!-- <div class="page fullscreen hidden" data-voiceover="vegetation">
+		      	<div class="center">
+		      		<div id="vegMatrix"></div>
+			      	<div class="unit"><div class="instruction"><i>Voiceover TBA</i> This is a satellite estimate of the vegetation cover of your surroundings. The average is <strong><span data-bind-value="avg"></span></strong>, which corresponds to (explanation to be inserted here).</div></div>
+			      	<button class="next nextPage"></button>
+		      	</div>
+		      </div> -->
 		      
 		      `;
 	}
@@ -148,6 +155,47 @@ class Prompt_matchTree extends Prompt {
 			});
 		} else {
 			this.tooFar();
+			var lat = localStorage.getItem('lastlat');
+			var lon = localStorage.getItem('lastlon');
+			/* $.ajax({
+	            url: 'https://api.awen.earth/ndvi?lat='+lat+'&lon='+lon,
+	            type: "GET",
+	            crossDomain: true,
+	            success: function (response) {
+	                console.log(data);
+	            },
+	            error: function (xhr, status) {
+	                alert("error");
+	            }
+	        }); */
+			var input = `-0.035789475, 0.028225806, 0.328225806, -0.025411062, -0.025411062, -0.035789475, 0.428225806, 0.028225806, -0.025411062, -0.025411062, -0.10516252, -0.053598776, -0.053598776, 0.039215688, 0.039215688, -0.10516252, -0.053598776, -0.053598776, 0.039215688, 0.039215688, -0.033932135, 0.093103446, 0.093103446, 0.2471416, 0.2471416`;
+			this.data = input;
+			this.data = this.data.split(',');
+			this.matrix = this.interface.find('#vegMatrix');
+			
+			var tpl = `<div class="vegCell"></div>`;
+			
+			var html = '';
+			for(var i=0;i<this.data.length;i++) {
+				html += tpl;
+			}
+
+			this.matrix.append(html);
+			var _this = this;
+
+			var avg = 0;
+			for(var i=0;i<_this.data.length;i++) {
+				var val = parseFloat(_this.data[i]);
+				avg += val;
+				var c = 'grey';
+				console.log(avg,val);
+				if(val<=.9&&val>=.2) {
+					c = 'green';
+				}
+				_this.interface.find('.vegCell:eq('+i+')').addClass(c);
+			}
+			avg /= _this.data.length;
+			broadcast('avg',avg.toFixed(2));
 		}
 		
 		// super.show();

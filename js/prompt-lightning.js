@@ -4,17 +4,7 @@ class Prompt_lightning extends Prompt {
 	constructor(domID,doneCallback) {
 		super('lightning',domID,doneCallback);
 		
-		this._bearing = null;
-		this._initBearing = null;
-		this._relBearing = null;
-
-        this.steps = [
-			[0.43,20],
-			[0.68,-100],
-			[1,100]
-		];
-		this.step = 0;
-
+		
 		this.factor = 0;
 		this.tpl = `<div class="prompt lightning fullscreen" id="">
 				      <div class="page fullscreen hidden" data-voiceover="walk">
@@ -26,7 +16,6 @@ class Prompt_lightning extends Prompt {
 								 
           							<ellipse cy="100" cx="25" ry="15" rx="15" fill="#fa6565" stroke="none" opacity="1" />
 								  	
-								 	<polygon style="opacity:0;transform-origin:50% 50%;fill:rgba(0,0,0,0.25)" id="triangle" points="100,100 150,200 50,200" />
 								</svg>
 					      	
 			      			<div class="unit startUnit"><button class="halfLeft start">Start</button><button class="halfRight nextPage">Skip</button></div>
@@ -40,7 +29,7 @@ Due to fluctuating temperatures, what used to be a once in a lifetime occurence 
 
 The flash of lighting can make the nearby air up to four times hotter than the Sun. 
 </div></div>
-					      	<div class="unit"><button class="nextPage next"></button></div>
+					      	<div class="unit"><button class="autoNext nextPage next"></button></div>
 				      	</div>
 				      </div>
 				  </div> `;
@@ -49,31 +38,7 @@ The flash of lighting can make the nearby air up to four times hotter than the S
 		
 	}
 
-	set bearing(value) {
-		this._bearing = value;
-		if(this._initBearing==null) {
-			this._initBearing=this._bearing;
-
-		}
-		this._relBearing = value - this._initBearing;
-		if(this._relBearing<0) {
-			this._relBearing += 360;
-		}
-		this._relBearing = this._relBearing % 360;
-
-		if(!isIOS()) this._relBearing = -this._relBearing;
-		
-
-
-		if(this.triangle) {
-			this.triangle.css({'transform':'rotate('+(parseFloat(-this._relBearing+(this.steps[this.step][1])))+'deg)'});
-		}
-		broadcast('relBearing',Math.round(this._relBearing));
-	}
-	get bearing() {
-		return this._bearing;
-		
-	}
+	
 
 	show() {
 
@@ -87,7 +52,6 @@ The flash of lighting can make the nearby air up to four times hotter than the S
 		this.len  = this.line.getTotalLength();
 		this.pointer = this.svg.find('ellipse')[0];
 		this.factor = 0;
-		this.triangle = this.svg.find('#triangle');
 		this.stop = false;
 
 		var targetPoint = this.line.getPointAtLength(0);
@@ -97,70 +61,28 @@ The flash of lighting can make the nearby air up to four times hotter than the S
         this.pointer.setAttribute('cy', targetPoint.y);
 
 
+		var targetPoint = _this.line.getPointAtLength(0);   
+		
 		function step(timestamp) {
+			
+			_this.factor+=.0009;
+			var targetPoint = _this.line.getPointAtLength(_this.factor*_this.len);   
+
+	        _this.pointer.setAttribute('cx', targetPoint.x);
+	        _this.pointer.setAttribute('cy', targetPoint.y);
+
+			if(_this.factor>=.999) {
+			
+				_this.nextPage(_this.interface.find('.page:eq(0)'));
+				_this.stop = true;
 				
-			broadcast('step',_this.step);	
-			var margin = 15;
-			
-			var targetBearing = _this.steps[_this.step][1];
-			if(targetBearing<0) {
-				targetBearing += 360;
 			}
-			targetBearing = targetBearing % 360;
-
-			broadcast('targetBearing',targetBearing);
-
-			var advance = false;
-
-			if(targetBearing>=margin&&targetBearing<=360-margin) {
-				if(Math.abs(_this._relBearing-targetBearing)<=margin) {
-					advance = true;
-				}
-			} else {
-				if(targetBearing<margin) {
-					// target angle between 0 and margin
-					if(_this._relBearing<targetBearing+margin||_this._relBearing>=360-margin+targetBearing) {
-						advance = true;
-					}
-				} else {
-					// target angle between 360-margin and 359.99999
-					if(_this._relBearing<(targetBearing-360+margin)||_this._relBearing>targetBearing-margin) {
-						advance = true;
-					}
-				}
-			}
-			if(advance) {
-
-				_this.factor+=.0009;
-				if(_this.factor>=_this.steps[_this.step][0]) {
-					// next stage
-					_this.step++;
-					_this._initBearing=_this._bearing;
-					
-				}		
-		        var targetPoint = _this.line.getPointAtLength(_this.factor*_this.len);   
-
-		        _this.pointer.setAttribute('cx', targetPoint.x);
-		        _this.pointer.setAttribute('cy', targetPoint.y);
-
-				if(_this.factor>=.999) {
-				
-					_this.nextPage(_this.interface.find('.page:eq(0)'));
-					_this.stop = true;
-					
-				}
-			}
-					
-			
-			
-			
 
 			if(!_this.stop) window.requestAnimationFrame(step);
 		}
 
 		this.interface.find('.start').off('click').on('click',function(){
 			window.requestAnimationFrame(step);
-			_this.triangle.animate({'opacity':1},500);
 			_this.interface.find('.startUnit').animate({'opacity':0},'fast');
 		});
 

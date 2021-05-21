@@ -7,14 +7,14 @@ class Prompt_noise extends Prompt {
 		      <div class="page fullscreen hidden" data-voiceover="find">
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">Find a noisy place.</div></div>
-			      	<div class="unit"><button class="timedNextPage" data-delay-when="before" data-delay="3000">Found it</button></div>
+			      	<div class="unit"><button class="nextPage">Found it</button></div>
 		      	</div>
 		      </div>
 		      
 		      <div class="page fullscreen hidden" data-voiceover="take">
 		      	<div class="center">
 			      	<div class="unit"><div class="instruction">Take a moment and consider what you hear.</div></div>
-			      	<div class="unit"><button class="timedNextPage next" data-delay-when="before" data-delay="5000"></button></div>
+			      	<div class="unit"><button class="autoNext next nextPage"></button></div>
 		      	</div>
 		      </div>
 		      <div class="page fullscreen hidden" data-voiceover="can">
@@ -28,7 +28,7 @@ class Prompt_noise extends Prompt {
 			      	<div class="unit"><div class="instruction">
 Birdsong is most prominent at the start of each day. To have their voices heard, birds adapt to our acoustics and listen to our movements. The dawn chorus sings earlier and earlier to avoid our noisy rush hour. Birdsong displaced.
 </div></div>
-			      	<div class="unit"><button class="next nextPage"></button></div>
+			      	<div class="unit"><button class="autoNext next nextPage"></button></div>
 		      	</div>
 		      </div>
 		      
