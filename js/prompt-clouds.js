@@ -87,7 +87,13 @@ Thin, linear tracks that become visible from space.
 
 	}
 	
+	get speed() {
+		return this._speed;
+	}
 
+	set speed(val) {
+		this._speed = val;
+	}
 	
 	show() {
 
@@ -119,9 +125,13 @@ Thin, linear tracks that become visible from space.
 
 
 		function step(timestamp) {
-
 			
-			_this.factor+=.0009;
+			var speed = 0.66;
+			if(_this.speed!==null) {
+				speed=_this.speed;
+			}
+
+			_this.factor+=(.0008*speed);
 			_this.trail.style.strokeDashoffset = _this.len*(1-_this.factor);
 			if(_this.factor>=1) {
 			

@@ -14,7 +14,7 @@ class Prompt_breathe extends Prompt {
 		      <div class="page fullscreen hidden" data-voiceover="take">
 			      <div class="center">
 			      	<div class="unit"><div class="instruction">Take five deep breaths</div></div>
-			      	<div class="timer" data-delay="15000">
+			      	<div class="timer" data-delay="45000">
 			      		<canvas width="200" height="200"></canvas>
 			      	</div>
 			      	<div class="unit"><button class="startTimer">Start</button></div>

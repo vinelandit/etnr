@@ -1,6 +1,9 @@
 <?php
+
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
+
+include_once('./db.inc.php');
 
 $data = $_REQUEST;
 
@@ -13,7 +16,7 @@ $mediaURL = $_SERVER['SCRIPT_URI'];
 $mediaURL = str_replace('/api','/usermedia',$mediaURL);
 
 // Create connection
-$conn = new mysqli($_ENV['MYSQL_SERVER'], $_ENV['MYSQL_USER'], $_ENV['MYSQL_PASSWORD'], $_ENV['MYSQL_DATABASE']);
+$conn = new mysqli($servername, $username, $password, $dbname);
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -384,11 +387,11 @@ if($rKey!=$key) {
         case 'uploadstate':
             $payload = $data['payload'];
             if(isset($payload['state']) && $payload['state']!='') {
-                $sq = "UPDATE users SET state='".$payload['state']."' WHERE userID=$id LIMIT 1";
+                $sq = "UPDATE users SET state='".addslashes($payload['state'])."' WHERE userID=$id LIMIT 1";
                 $result = $conn->query($sq);
 
                 $response['result'] = 'success';
-                $response['message']  = 'state successfully uploaded.';
+                $response['message']  = 'state successfully uploaded: '.$conn->error;
             } else {
                 $response['result'] = 'error';
                 $response['message']  = 'state missing.';

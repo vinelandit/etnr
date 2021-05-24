@@ -129,7 +129,7 @@ function api(command,data,callback,overrideEndpoint=null,overrideID=null) {
 			'payload':data
 		},
 		success: function(data) {
-			// console.log(data);
+			console.log(data);
 			data = JSON.parse(data);
 			if(id!=data.id) {
 				console.log('updating unique id from '+id+' to '+data.id);

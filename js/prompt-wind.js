@@ -40,10 +40,5 @@ Maintain this pace for a little while.
 	}
 	
 	
-	show() {
-		super.show();
-		// load fourth batch of background audio
-		audio.backgroundLoad(4);
-	}
 }
 

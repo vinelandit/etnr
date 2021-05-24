@@ -13,14 +13,18 @@ body,html {
 * {
   box-sizing:border-box;
 }
-
+#loadingAudio {
+  z-index:100000;
+  background-color:rgba(0,0,0,0.75);
+  display:none;
+}
 button.autoNext {
   position:fixed;
   opacity:0;
   left:-5000px;
   top:0;
   left:0;
-  z-index:10000000;
+  z-index:100000;
 }
 
 #videoHolder {
@@ -230,14 +234,14 @@ label {
   
   margin-left:10px;
   margin-right:10px;
-  background-color:rgba(255,255,255,0.25);
-  opacity:0.9;
+  background-color:rgba(255,255,255,.9);
+  opacity:1;
   padding:12px;
   border-radius:5px;
   padding-top:9px;
   padding-bottom:9px;
   margin-bottom:10px;
-  color:white;
+  color:black;
   font-size:14px;
   line-height:16px;
   text-transform:uppercase;
@@ -293,6 +297,14 @@ label {
   padding-right: 20px;
   max-width:85%;
   font-size:18px;
+}
+.instruction.small {
+  padding:12px;
+  padding-left:15px;
+  padding-right:15px;
+  font-size:13px;
+  line-height:15px;
+
 }
 .instruction {
 
@@ -543,14 +555,16 @@ a:hover {
   transform-origin: 0 0;
 }
 #vegMatrix {
-  width:254px;
-  height:254px;
+  width:204px;
+  height:204px;
   margin:0 auto;
   border:2px solid white;
+  margin-bottom:20px;
+  margin-top:20px;
 }
 .vegCell {
-  width:50px;
-  height:50px;
+  width:40px;
+  height:40px;
   float:left;
 }
 .vegCell.green {
@@ -769,7 +783,8 @@ svg#lsvg {
   background-image:url(../images/bg_earth.jpg);
 }
 
-.prompt.matchTree {
+.prompt.matchTree,
+.prompt.vegetation {
   background-image:url(../images/tree_bg.jpg);
 }
 

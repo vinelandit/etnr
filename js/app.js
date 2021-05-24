@@ -5,7 +5,11 @@ class App {
 
     	localStorage.setItem('speed',0);
         this._vegMapInit = true;
+        this.loadingAudio = $('#loadingAudio');
 
+
+        this.audioReady = true;
+        this.audioWaiting = false;
 
         this.testGPS = testGPS;
 
@@ -40,8 +44,18 @@ class App {
                         
                         { 'type':'hum' }
                     ],
+                    'audio':{
+
+                        "hum_continue": {},
+                        "hum_hum": {}, 
+                        "hum_some": {},
+                        "loop_motif": {
+                          loop: true,
+                          keep: true
+                        }
+                    },
                     'type':'prompt',
-                    'message':"Let's keep moving"
+                    'message':"Let&apos;s keep moving"
                 },
                 {
                     'distance': 45,
@@ -50,21 +64,55 @@ class App {
                         
                         { 'type':'ground' }
                     ],
+                    'audio':{
+                        "ground_did": {},
+                        "ground_find": {},
+                        "ground_pick": {},
+                        "ground_try": {},
+                        "ground_wetter": {},
+                        "ground_continue": {}
+                    },
                     'type':'prompt',
-                    'message':"Let's keep going"
+                    'message':"Let&apos;s keep going"
                 },
 	            {
-	                'distance': 30,
+                    'distance': 30,
                     'time': 30,
-	                'prompts': [
-	                	{ 
-	                		'type':'matchTree'
-	                	}
-	                	
-	                ],
-	                'type':'prompt',
+                    'prompts': [
+                        { 
+                            'type':'matchTree'
+                        }
+                        
+                    ],
+                    'audio':{
+                        "matchTree_continue": {},
+                        "matchTree_explanation": {},
+                        "matchTree_seek": {},
+                        "matchTree_spend": {},
+                        
+                        "loop_matchTree": {
+                          loop: true
+                        }
+                    },
+                    'type':'prompt',
                     'message':'Carry on with your journey'
-	            },
+                },
+                {
+                    'distance': 30,
+                    'time': 30,
+                    'prompts': [
+                        { 
+                            'type':'vegetation'
+                        }
+                        
+                    ],
+                    'type':'prompt',
+                    'audio':{
+                        
+                        "leaf_can": {}
+                    },
+                    'message':'Carry on with your journey'
+                },
 	            {
 	                'distance': 100,
                     'time': 30,
@@ -73,6 +121,17 @@ class App {
 	                		'type':'leaf'
 	                	}
 	                ],
+                    'audio':{
+                        "loop_leaf": {
+                          loop: true
+                        },
+                        "leaf_can": {},
+                        "leaf_pick": {},
+                        "leaf_next": {},
+                        "leaf_when": {},
+                        "leaf_earliest": {},
+                        "leaf_continue": {}
+                    },
 	                'type':'prompt',
                     'message':'Please continue your walk'
 	            },
@@ -85,8 +144,17 @@ class App {
                         }
                         
                     ],
+                    'audio':{
+                        "weeds_continue": {},
+                        "weeds_follow": {},
+                        "weeds_plant": {},  
+
+                        "loop_weeds": {
+                          loop: true
+                        }
+                    },
                     'type':'nudge',
-                    'message':"Let's continue the walk"
+                    'message':"Let&apos;s continue the walk"
                 },
                 {
                     'distance': 100,
@@ -97,6 +165,16 @@ class App {
                         }
                         
                     ],
+                    'audio':{
+                        "lichen_continue": {},
+                        "lichen_take": {},
+                        "lichen_these": {},
+
+                        "loop_lichen": {
+                          loop: true
+                        }
+                      
+                    },
                     'type':'nudge',
                     'message':'Continue your journey'
                 },
@@ -109,6 +187,14 @@ class App {
                         }
                         
                     ],
+                    'audio':{
+                        "loop_lightning": {
+                          loop: true
+                        },
+                        "lightning_continue": {},
+                        "lightning_flickering": {},
+                        "lightning_walk": {},
+                    },
                     'type':'nudge',
                     'message':'Please continue walking'
                 },
@@ -122,6 +208,17 @@ class App {
 	                	}
 	                	
 	                ],
+                    'audio':{
+                        "loop_wind": {
+                          loop: true
+                        },
+                        
+                        "wind_continue": {},
+                        "wind_feel": {},
+                        "wind_increase": {},
+                        "wind_keep": {},
+                        "wind_wind": {}, 
+                    },
 	                'type':'prompt',
                     'message':'Please continue your walk'
 	            },
@@ -134,6 +231,18 @@ class App {
                         }
                         
                     ],
+                    'audio':{
+                        "clouds_are": {},
+                        "clouds_continue": {},
+                        "clouds_drifting": {},
+                        "clouds_explanation": {},
+                        "clouds_look": {},
+                        "clouds_follow": {},
+
+                        "loop_clouds": {
+                          loop: true
+                        }
+                    },
                     'type':'prompt',
                     'message':'Please continue walking'
                 },
@@ -146,6 +255,14 @@ class App {
                         }
                         
                     ],
+                    'audio':{
+                        "blue_blue": {},
+                        "blue_take": {},
+                        "blue_continue": {},
+                        "loop_blue": {
+                          loop: true
+                        },
+                    },
                     'type':'nudge',
                     'message':'Please continue walking'
                 },
@@ -158,6 +275,15 @@ class App {
 	                	}
 	                	
 	                ],
+                    'audio':{
+                        "quietness_continue": {},
+                        "quietness_dont": {},
+                        "quietness_entire": {},
+                        "quietness_record": {},
+                        "quietness_search": {},
+                        "quietness_in": {},
+                        "quietness_thank": {},
+                    },
 	                'type':'prompt',
                     'message':'Please continue your journey'
 	            },
@@ -170,6 +296,17 @@ class App {
 	                	}
 	                	
 	                ],
+                    'audio':{
+                        "ocean_by": {},
+                        "ocean_continue": {},
+                        "ocean_scotland": {},
+                        "ocean_in": {},
+                        "ocean_uk": {},
+                        "ocean_turn": {},
+                        "loop_water": {
+                          loop: true
+                        }     
+                    },
 	                'type':'nudge',
                     'message':'Please continue facing the ocean'
 	            },
@@ -185,6 +322,19 @@ class App {
                         { 'type': 'complete'}
 	                	
 	                ],
+                    'audio':{
+                        "breathe_inhale": {},
+                        "breathe_one": {},
+                        "breathe_take": {},
+                        "breathe_this2": {},
+
+                        "loop_breathe": {
+                          loop: true
+                        },
+                        "beforeEnd_thank": {},
+                        "complete_traces": {},
+                        "complete_journey": {},
+                    },
 	                'type':'prompt'
 	            }
 	            
@@ -317,22 +467,34 @@ class App {
 			
 			showPrompt = this.state.stage.state.currentPrompt;
 
-	        this.state.stage = new Stage(this.state.stages[this.state.stageID],_this.stageDone.bind(_this),_this.saveState.bind(_this));
-	        if(showPrompt>=0) {
-	        	this.state.stage.state.currentPrompt = showPrompt;
-	        	console.log('attempting to show prompt '+showPrompt);
-	        	this.state.stage.showPrompt();
-	        	this.state.stepping = false;
-	        } else {
-                this.showKeepWalking();
-            }
+            this.loadingAudio.show();
+            this.audioReady = false;
+            this.audioWaiting = true;
 
-	        localStorage.setItem('etnr_gpxid',this.state.gpx.length-1);
+            audio.backgroundLoad(this.state.stages[this.state.stageID].audio,function(){
+                console.log('bg done');
+                _this.audioReady = true;
+                _this.audioWaiting = false;
+                _this.loadingAudio.hide();
+                _this.state.stage = new Stage(_this.state.stages[_this.state.stageID],_this.stageDone.bind(_this),_this.saveState.bind(_this));
+                if(showPrompt>=0) {
+                    _this.state.stage.state.currentPrompt = showPrompt;
+                    console.log('attempting to show prompt '+showPrompt);
+                    _this.state.stage.showPrompt();
+                    _this.state.stepping = false;
+                } else {
+                    _this.showKeepWalking();
+                }
 
-	        // request media from server
-	        this.getMedia();
-	        // initialise path canvas with prior path
-        	this.initPathCanvas();
+                localStorage.setItem('etnr_gpxid',_this.state.gpx.length-1);
+
+                // request media from server
+                _this.getMedia();
+                // initialise path canvas with prior path
+                _this.initPathCanvas();
+            });
+
+	        
 
     	} else {
     		this.initState();
@@ -490,45 +652,6 @@ class App {
 
     }
 
-    startStageAudio(stageID,fade=5000) {
-        return true;
-        if(this.state.stages[stageID]) {
-            var audioLabel = this.state.stages[stageID].prompts[0].type;
-            if(this.state.stages[stageID].audio) {
-                audioLabel = this.state.stages[stageID].audio;
-            }
-            var a = audio.data.sprite['loop_'+audioLabel];
-            console.log('audio?',a,audioLabel);
-            if(a && !audio.soundIDs[audioLabel]) {
-                console.log('starting audio for stage '+audioLabel);
-                // turn on stage background audio
-                audio.soundIDs[audioLabel] = audio.s.play('loop_'+audioLabel);
-                audio.currentSoundID = audio.soundIDs[audioLabel];
-
-                console.log('registered audio ID '+audio.soundIDs[audioLabel]+' for '+audioLabel);
-            } else {
-
-                console.log('no audio for stage '+audioLabel+' or stage audio already playing');
-            }    
-        }
-        
-    }
-    stopStageAudio(stageID,fade=5000) {
-        return true;
-        var audioLabel = this.state.stages[stageID].prompts[0].type;
-        if(this.state.stages[stageID].audio) {
-            audioLabel = this.state.stages[stageID].audio;
-        }
-    	if(audio.soundIDs[audioLabel]) {
-    		// turn off stage background audio
-    		audio.s.fade(0.5,0,fade,audio.soundIDs[audioLabel]);	
-    		console.log('stopping audio for stage '+audioLabel+ ' fade '+fade);
-    	} else {
-
-    		console.log('no audio for stage '+audioLabel);
-    	}
-    }
-
     stageDone() {
     	// is there another stage?
     	console.log('App.stageDone()');
@@ -557,6 +680,22 @@ class App {
     		// show walking
             this.showKeepWalking();
             this.initProgressSVG();
+
+            // preload audio for next stage
+            this.audioReady = false;
+            this.audioWaiting = false;
+
+            audio.backgroundLoad(this.state.stages[this.state.stageID].audio,function(){ 
+
+                _this.audioReady = true; 
+                _this.loadingAudio.hide(); 
+                
+
+                console.log('BACKGROUND AUDIO FULLY LOADED');
+                if(_this.audioWaiting) {
+                    _this.beginPrompts();
+                }
+            });
 
     	} else {
     		console.log('game done');
@@ -681,10 +820,19 @@ class App {
     }
 
    	updateProgress() {
+        var speed = 1.0;
+        var gps = this.state.gpx[this.state.gpx.length-1];
 
+        if(gps.speed!==null) {
+            speed = gps.speed;
+        }
+
+
+        
         this.state.overallTime += 1;
+        
         broadcast('time',this.state.overallTime);
-		if(this.state.stepping && this.state.stage) {				
+		if(this.state.stepping && this.state.stage && speed>0.3) {				
 				
 
     		this.state.stage.state.progress += 1;
@@ -703,26 +851,30 @@ class App {
    	}
 
    	beginPrompts() {
-
         $('#vegMap').hide();
 
-   		this.state.stepping = false;
-		// stage goal reached: trigger prompt
-		if(this.state.stageID!=0) {
-    		if(this.state.stages[this.state.stageID].type=='prompt') {
-    			audio.s.prompt.play();
-    		} else {
-    			audio.s.nudge.play();
-    		}
-    	}
-        // prompt stage audio
-        if(this.state.stageID>0) {
-            
-            this.stopStageAudio(this.state.stageID-1);  
-        }
-        this.startStageAudio(this.state.stageID);   
+        this.state.stepping = false;
+        // stage goal reached: trigger prompt
 
-		this.state.stage.advancePrompt();
+        if(this.audioReady || this.state.stageID==0) {
+            this.loadingAudio.hide();
+            if(this.state.stageID!=0) {
+                if(this.state.stages[this.state.stageID].type=='prompt') {
+                    audio.s.prompt.play();
+                } else {
+                    audio.s.nudge.play();
+                }
+            }
+            
+            this.audioWaiting = false;
+            this.state.stage.advancePrompt();
+        } else {
+
+            this.loadingAudio.show();
+            this.audioWaiting = true;
+        }
+
+        
 		
    	}
    	
@@ -743,7 +895,9 @@ class App {
 	    			'stage':_this.state.stageID,
                     'stageType':_this.state.stages[_this.state.stageID].prompts[0].type,
 	    			'stepping':true,
-                    'accuracy':0
+                    'accuracy':0,
+                    'heading':null,
+                    'speed':3
 	    		});
 	    		_this.state.init = false;
 	    		_this.state.stepping = true;
@@ -765,10 +919,12 @@ class App {
 		            	'stepping':_this.state.stepping,
 	    				'stage':_this.state.stageID,
                         'stageType':_this.state.stages[_this.state.stageID].prompts[0].type,
-                        'accuracy':0
+                        'accuracy':0,
+                        'heading':null,
+                        'speed':3
 		            });
-		            _this.delta = 4;
-		            localStorage.setItem('lastSpeed',4);
+		            _this.delta = 3;
+		            localStorage.setItem('lastSpeed',3);
 
 		        	broadcast('accuracy','N/A');
 		        	broadcast('speed',Math.round(localStorage.getItem('lastSpeed')));
@@ -800,23 +956,7 @@ class App {
        		return true;
     	}
 
-        // first check if permission previously denied
-        if (navigator.permissions) {
-            navigator.permissions.query({
-                name: 'geolocation'
-            }).then(function(result) {
-                if (result.state == 'granted') {
-                    console.log('geolocation permission granted');
-                } else if (result.state == 'prompt') {
-                    console.log('geolocation permission prompt');
-                } else if (result.state == 'denied') {
-                    console.log('geolocation permission denied, show error');
-                    _this.showError('GPS permission denied. Please close your browser and reopen this page in it, granting all requested permissions.');
-                    return;
-                }
-
-            })
-        } 
+        
 
 
         
@@ -834,132 +974,140 @@ class App {
     }
 
     gpsCallback(position) {
-
-        var now = Date.now();
-        var _this = this;
-        console.log('receiving event from sensors GPS',position);
-        if(typeof _this._msgGPS !== 'undefined') {
-            _this._msgGPS.hide();
-        }
-
-
-        position.coords = {
-            'accuracy':position.accuracy,
-            'latitude':position.latlng.lat,
-            'longitude':position.latlng.lng,
-            'timestamp':now,
-            'proc':false,
-            'stepping':_this.state.stepping,
-            'stage':_this.state.stageID,
-            'stageType':_this.state.stages[_this.state.stageID].prompts[0].type
-        };
-
-        broadcast('accuracy',Math.round(position.coords.accuracy));
-        
-        var lastlon = parseFloat(localStorage.getItem('lastlon'));
-        var lastlat = parseFloat(localStorage.getItem('lastlat'));
-
-        if(_this.firstRunGPS) {
-            _this.firstRunGPS = false;
-            console.log('first run gps');
-            _this.gpsInitTime = now;
-            _this.geolocationDone();
-            _this._msgStabilise = new Message('Awaiting GPS stabilisation...');
-            
-        } else {
-
-
-            var rawDelta = distance(position.coords.latitude,position.coords.longitude,lastlat,lastlon);
-            
-            // console.log(position.coords,lastlat,lastlon);
-            // console.log('rawDelta',rawDelta);
-            
-            
-            var timeDelta = 0;
-            if(_this.gpsTick>0) {
-                timeDelta = (now - _this.gpsTick)/1000;
-            
-                console.log('timedelta',timeDelta);
-
-                // _this.state.overallTime += timeDelta;
-                
-
-                console.log('dist',rawDelta,'time',timeDelta);
+        if(!this.state.complete) {
+            var now = Date.now();
+            var _this = this;
+            console.log('receiving event from sensors GPS',position);
+            if(typeof _this._msgGPS !== 'undefined') {
+                _this._msgGPS.hide();
             }
-            _this.gpsTick = now;
+
+
+            position.timestamp = now;
+            position.proc = false;
+            position.stepping = _this.state.stepping;
+            position.stage = _this.state.stageID;
+            position.stageType = _this.state.stages[_this.state.stageID].prompts[0].type;
             
 
-            _this.gpsElapsed = (now-_this.gpsInitTime)/1000;
 
-            // console.log('gpsElapsed',_this.gpsElapsed);
+            broadcast('accuracy',Math.round(position.accuracy));
+            
+            var lastlon = parseFloat(localStorage.getItem('lastlon'));
+            var lastlat = parseFloat(localStorage.getItem('lastlat'));
 
-
-
-            if(!_this.state.complete) {
-
-                if(_this.gpsElapsed>5 || (_this.gpsElapsed<=5 && position.coords.accuracy<=20)) {
-                    // good data point, add
-                    // console.log('adding good data point');
-                    _this.state.gpx.push({
-                        'lat':position.coords.latitude,
-                        'lon':position.coords.longitude,
-                        'accuracy':position.coords.accuracy,
-                        'timestamp':now,
-                        'proc':false,
-                        'stepping':_this.state.stepping,
-                        'stage':_this.state.stageID,
-                        'stageType':_this.state.stages[_this.state.stageID].prompts[0].type
-                    });
-
-                    localStorage.setItem('etnr_gpxid',_this.state.gpx.length-1);
-                    // console.log('gpxid: '+localStorage.getItem('etnr_gpxid'));
-
-
-                    if(_this.state.gpx.length>1) {  
-                    
-                        if(typeof _this._msgStabilise !=='undefined') {
-                            _this._msgStabilise.hide();
-                        }
-
-                        // get delta distance
-                        var p1 = _this.state.gpx[_this.state.gpx.length-1]; // new point
-                        var p2 = _this.state.gpx[_this.state.gpx.length-2]; // previous point
-                        _this.delta = distance(p1.lat,p1.lon,p2.lat,p2.lon);
-                        
-                        _this.state.overallProgress += _this.delta;
-
-                        localStorage.setItem('lastSpeed',3.6*_this.delta/timeDelta);
-                        broadcast('speed',Math.round(parseFloat(localStorage.getItem('lastSpeed')))+'km/h');
-
-                        if(_this.state.stage && _this.state.stage.prompt)
-
-                        if(_this.state.init) {
-                            _this.state.init = false;
-                            console.log('initialising path canvas');
-                            _this.initPathCanvas();
-                        } else {
-                            // console.log('updating path canvas');
-                            _this.updatePathCanvas();
-                        }
-
-                        /* if(_this.state.stepping) {
-                            // console.log('updating progress');
-                            _this.updateProgress();
-                        } */
-
-                        
-                    }
-                    if(_this.state.stage !== null && _this.state.stage.prompt !== null) {
-                        // send coords down to prompt
-                        _this.state.stage.prompt.gps = position.coords;
-                        _this.state.stage.prompt.speed = localStorage.getItem('lastSpeed');
-                    }
-                }
+            if(_this.firstRunGPS) {
+                _this.firstRunGPS = false;
+                console.log('first run gps');
+                _this.gpsInitTime = now;
+                _this.geolocationDone();
+                _this._msgStabilise = new Message('Awaiting GPS stabilisation...');
                 
-            } 
+            } else {
+
+
+                var rawDelta = distance(position.latitude,position.longitude,lastlat,lastlon);
+                
+                // console.log(position.coords,lastlat,lastlon);
+                // console.log('rawDelta',rawDelta);
+                
+                
+                var timeDelta = 0;
+                if(_this.gpsTick>0) {
+                    timeDelta = (now - _this.gpsTick)/1000;
+                
+                    console.log('timedelta',timeDelta);
+
+                    // _this.state.overallTime += timeDelta;
+                    
+
+                    console.log('dist',rawDelta,'time',timeDelta);
+                }
+                _this.gpsTick = now;
+                
+
+                _this.gpsElapsed = (now-_this.gpsInitTime)/1000;
+
+                // console.log('gpsElapsed',_this.gpsElapsed);
+
+
+
+                if(!_this.state.complete) {
+
+                    if(_this.gpsElapsed>5 || (_this.gpsElapsed<=5 && position.accuracy<=20)) {
+                        // good data point, add
+                        // console.log('adding good data point');
+                        _this.state.gpx.push({
+                            'lat':position.latitude,
+                            'lon':position.longitude,
+                            'accuracy':position.accuracy,
+                            'timestamp':now,
+                            'proc':false,
+                            'stepping':_this.state.stepping,
+                            'stage':_this.state.stageID,
+                            'stageType':_this.state.stages[_this.state.stageID].prompts[0].type,
+                            'heading':position.heading,
+                            'speed':position.speed
+                        });
+
+                        localStorage.setItem('etnr_gpxid',_this.state.gpx.length-1);
+                        // console.log('gpxid: '+localStorage.getItem('etnr_gpxid'));
+
+
+                        // localStorage.setItem('lastSpeed',3.6*_this.delta/timeDelta);
+                        var speed = position.speed;
+                        if(speed!==null) {
+                            speed = (parseFloat(speed)*3.6).toFixed(2)+'km/h';
+                        } else {
+                            speed = '...';
+                        }
+                        broadcast('speed',speed);
+
+                        if(_this.state.gpx.length>1) {  
+                        
+                            if(typeof _this._msgStabilise !=='undefined') {
+                                _this._msgStabilise.hide();
+                            }
+
+                            // get delta distance
+                            var p1 = _this.state.gpx[_this.state.gpx.length-1]; // new point
+                            var p2 = _this.state.gpx[_this.state.gpx.length-2]; // previous point
+                            _this.delta = distance(p1.lat,p1.lon,p2.lat,p2.lon);
+                            
+                            _this.state.overallProgress += _this.delta;
+
+
+                            if(_this.state.stage && _this.state.stage.prompt)
+
+                            if(_this.state.init) {
+                                _this.state.init = false;
+                                console.log('initialising path canvas');
+                                _this.initPathCanvas();
+                            } else {
+                                // console.log('updating path canvas');
+                                _this.updatePathCanvas();
+                            }
+
+                            /* if(_this.state.stepping) {
+                                // console.log('updating progress');
+                                _this.updateProgress();
+                            } */
+
+                            
+                        }
+                        if(_this.state.stage !== null && _this.state.stage.prompt !== null) {
+                            // send coords down to prompt
+                            _this.state.stage.prompt.gps = position;
+                            _this.state.stage.prompt.speed = position.speed;
+                        }
+                    }
+                    
+                } 
+            }
+            localStorage.setItem('lastlon',position.longitude);
+            localStorage.setItem('lastlat',position.latitude);
         }
-        localStorage.setItem('lastlon',position.coords.longitude);
-        localStorage.setItem('lastlat',position.coords.latitude);
+        
         
     }
 
@@ -1245,10 +1393,11 @@ class App {
 
     uploadState(ending=false) {
     	var s = JSON.stringify(decycle(this.state),this.replacer);
+        console.log('uploading state...');
     	api('uploadstate',{
     		'state':s
     	},function(data){
-    		console.log('upload state RAW: ');
+    		console.log('upload state response: ');
     		console.log(data);
     		// data = JSON.parse(data);
     		if(data.result=='success') {

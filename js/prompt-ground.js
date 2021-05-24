@@ -52,11 +52,6 @@ Slowly release the soil from your hand.</div></div>
 		      
 		  </div>`;
 	}
-	complete() {
-		// load second batch of background audio
-		audio.backgroundLoad(2);
-		super.complete();
-	}
 	
 }
 

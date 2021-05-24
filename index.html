@@ -15,6 +15,9 @@
 </head>
 
 <body class="fullscreen app">
+  <div class="fullscreen" id="loadingAudio">
+    <div class="center"><h2>LOADING AUDIO...</h2></div>
+  </div>
   <div class="fullscreen" id="rotate">
     <div class="content">
       <img src="images/rotate.png" alt="rotate" />
@@ -127,10 +130,12 @@
 
       <div id="stats">
         <div class="statsCol">
-          Time:
+          Time:<br/>
+          Speed:
         </div>
         <div class="statsCol">
-          <span data-bind-value="time" data-bind-suffix="s"></span>
+          <span data-bind-value="time" data-bind-suffix="s"></span><br/>
+          <span data-bind-value="speed"></span>
         </div>
       </div>
 

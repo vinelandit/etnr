@@ -92,25 +92,12 @@ class Prompt_intro extends Prompt {
 				$(this).text('LOADING...');
 				var stageID = state.stageID;
 
-				var batch = 4;
-				if(stageID<=1) {
-					batch = 1;
-					
-				} else if (stageID<=4) {
-					batch = 2;
-					
-				} else if (stageID<=7) {
-					batch = 3;
-					
-				} 
-				audio.backgroundLoad(batch,function(){
-					console.log('bg done');
-					var app = new App(localStorage.getItem('etnr_userid'),testGPS);
-					// connect sensors to app
-					sensors = new Sensors(app.gpsCallback.bind(app),app.gpsError.bind(app),app.orientationTick.bind(app),app.orientationError.bind(app),app.motionTick.bind(app),app.motionError.bind(app));
-					sensors.init();
-					var stageID = app.state.stageID;
-				});
+				var app = new App(localStorage.getItem('etnr_userid'),testGPS);
+				// connect sensors to app
+				sensors = new Sensors(app.gpsCallback.bind(app),app.gpsError.bind(app),app.orientationTick.bind(app),app.orientationError.bind(app),app.motionTick.bind(app),app.motionError.bind(app));
+				sensors.init();				
+				
+				
 			});
 
 

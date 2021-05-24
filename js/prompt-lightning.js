@@ -35,10 +35,17 @@ The flash of lighting can make the nearby air up to four times hotter than the S
 				  </div> `;
 
 		this._startGPS = {'latitude':localStorage.getItem('lastlat'),'longitude':localStorage.getItem('lastlon')};
+		this._speed = 0;
 		
 	}
 
-	
+	get speed() {
+		return this._speed;
+	}
+
+	set speed(val) {
+		this._speed = val;
+	}
 
 	show() {
 
@@ -65,7 +72,14 @@ The flash of lighting can make the nearby air up to four times hotter than the S
 		
 		function step(timestamp) {
 			
-			_this.factor+=.0009;
+			var speed = .66;
+			if(_this.speed!==null) {
+				speed=_this.speed;
+			}
+	        console.log('zigzag speed '+speed);
+
+			_this.factor+=(.0008*speed);
+
 			var targetPoint = _this.line.getPointAtLength(_this.factor*_this.len);   
 
 	        _this.pointer.setAttribute('cx', targetPoint.x);

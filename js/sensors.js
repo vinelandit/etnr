@@ -67,7 +67,7 @@ class Sensors {
 
 	onLocationFound(e) {
 		var _this = this;
-		
+		console.log(e);
 
 		if(_this.gpsTimeout!==null) {
 			window.clearTimeout(_this.gpsTimeout);
@@ -79,21 +79,21 @@ class Sensors {
 		}
 
 		console.log('sending GPS object from sensor callback ');
-		_this.gpsCallback(e);
-		var radius = e.accuracy / 2;
+		_this.gpsCallback(e.coords);
+		var radius = e.coords.accuracy / 2;
 
-		document.getElementById('acc').innerHTML = Math.round(e.accuracy);
+		document.getElementById('acc').innerHTML = Math.round(e.coords.accuracy);
 		
-		if(e.accuracy<=65) {
-			_this.latestPoints.push(e.latlng);
+		/* if(e.coords.accuracy<=65) {
+			_this.latestPoints.push(e.coords);
 			if(_this.latestPoints.length>2) {
 				_this.latestPoints.shift();
 			}
 			if(_this.latestPoints.length>1) {
-				var d = distance(_this.latestPoints[0].lat,_this.latestPoints[0].lng,_this.latestPoints[1].lat,_this.latestPoints[1].lng);
+				var d = distance(_this.latestPoints[0].latitude,_this.latestPoints[0].longitude,_this.latestPoints[1].latitude,_this.latestPoints[1].longitude);
 
 				document.getElementById('dist').innerHTML = d.toFixed(2);
-				if(d>0.5+e.accuracy/32.5) {
+				if(d>0.5+e.coords.accuracy/32.5) {
 					_this.latestBearingGPS = bearing(_this.latestPoints[0],_this.latestPoints[1]);
 					document.getElementById('bearingGPS').innerHTML = 'GPS: '+_this.latestBearingGPS;
 					_this.delta = _this.latestAlpha - _this.latestBearingGPS; // 80
@@ -104,10 +104,13 @@ class Sensors {
 				}
 			}
 
+		} */
+		if(e.coords.heading!==null) {
+			_this.latestBearingGPS = e.coords.heading;
+			_this.delta = _this.latestAlpha - _this.latestBearingGPS; 
 		} 
-		console.log(e);
-		document.getElementById('loc').innerHTML = e.latlng.lat+', '+e.latlng.lng;
-		_this.map.setView(e.latlng, _this.map.getZoom(), {
+		document.getElementById('loc').innerHTML = e.coords.latitude+', '+e.coords.longitude;
+		_this.map.setView({'lat':e.coords.latitude,'lng':e.coords.longitude}, _this.map.getZoom(), {
 			"animate":true,
 			"pan":{
 				"duration":2
@@ -153,9 +156,9 @@ class Sensors {
 				} else {
 					console.log('not granted');
 					_ = new Message('Orientation sensor permissions are required. Please quit the browser, re-open this page and grant permissions to use this app.',0,'error');
-									// stop the app here
-								}
-							});
+							// stop the app here
+						}
+					});
 			
 			
 		} else {
@@ -199,14 +202,40 @@ class Sensors {
 
 		
 
-		this.map.on('locationfound', _this.onLocationFound.bind(_this));
-		this.map.on('locationerror', _this.onLocationError.bind(_this));
+		// this.map.on('locationfound', _this.onLocationFound.bind(_this));
+		// this.map.on('locationerror', _this.onLocationError.bind(_this));
 
-		this.map.locate({
+		/* this.map.locate({
 			setView: true, 
 			watch  : true,
 			maxZoom: 16
-		});
+		}); */
+
+
+		// first check if permission previously denied
+        if (navigator.permissions) {
+            navigator.permissions.query({
+                name: 'geolocation'
+            }).then(function(result) {
+                if (result.state == 'granted') {
+                    console.log('geolocation permission granted');
+                    navigator.geolocation.watchPosition(_this.onLocationFound.bind(_this),_this.onLocationError.bind(_this),{'enableHighAccuracy':true,'timeout':5000,'maximumAge':5000});
+                } else if (result.state == 'prompt') {
+
+                    navigator.geolocation.watchPosition(_this.onLocationFound.bind(_this),_this.onLocationError.bind(_this),{'enableHighAccuracy':true,'timeout':5000,'maximumAge':5000});
+                    console.log('geolocation permission prompt');
+                } else if (result.state == 'denied') {
+                    console.log('geolocation permission denied, show error');
+                    _this.showError('GPS permission denied. Please close your browser and reopen this page in it, granting all requested permissions.');
+                    return;
+                }
+
+            })
+        } else {
+        	// no permissions object
+        	console.log('no permissions, requesting outside block');
+        	navigator.geolocation.watchPosition(_this.onLocationFound.bind(_this),_this.onLocationError.bind(_this),{'enableHighAccuracy':true,'timeout':5000,'maximumAge':5000});
+        }
 
 	}
 
